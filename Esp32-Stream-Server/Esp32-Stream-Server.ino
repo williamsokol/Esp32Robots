@@ -30,18 +30,19 @@ using namespace websockets;
 WebsocketsServer xserver;
 WebsocketsClient xclient;
 
-void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
-  // calculate duty, 8191 from 2 ^ 13 - 1
-  uint32_t duty = (8191 / valueMax) * min(value, valueMax);
-
-  // write duty to LEDC
-  ledcWrite(channel, duty);
-}
+//void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
+//  // calculate duty, 8191 from 2 ^ 13 - 1
+//  uint32_t duty = (8191 / valueMax) * min(value, valueMax);
+//
+//  // write duty to LEDC
+//  ledcWrite(channel, duty);
+//}
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
    
    Serial.println("callback " + msg.data());
+   
    //ledcAnalogWrite(0, msg.data().toInt());
    //xclient.send(msg.data());
    
@@ -76,11 +77,11 @@ void setup() {
 
   Serial.println(HIGH);
   pinMode(4, OUTPUT);
-
-  ledcSetup(0, 5000, 13);
-  ledcAttachPin(4, 0);
-  
-  ledcAnalogWrite(0, 10);
+//
+//  ledcSetup(0, 5000, 13);
+//  ledcAttachPin(4, 0);
+//  
+//  ledcAnalogWrite(0, 10);
 }
 
 void loop() {
