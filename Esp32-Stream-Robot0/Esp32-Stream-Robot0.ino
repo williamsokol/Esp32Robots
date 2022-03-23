@@ -20,27 +20,56 @@
 #include <ArduinoWebsockets.h>
 #include <WiFi.h>
 
-const char* ssid = "sokol"; //Enter SSID
-const char* password = "falcon99"; //Enter Password
+//these 2 libs down are to stop brownout on esp32
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
 
-int mess = 0;
+
+const char* ssid = "falcon1234"; //Enter SSID
+const char* password = "Tablelamp!"; //Enter Password
+
 
 using namespace websockets;
 
 WebsocketsServer xserver;
 WebsocketsClient xclient;
-WebsocketsMessage msg ;
 
-void callbackfunc(WebsocketsClient& x, WebsocketsMessage cmsg)
+
+void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
-   mess++;
-   Serial.println("callback " + cmsg.data() );
+   
+   Serial.println("callback " + msg.data());
+   int input = msg.data().toInt();
+   
+   ledcWrite(4,input);  // pin 12
+   //xclient.send(msg.data());
+   
 }
 
 
 
+
 void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // prevent brownouts by silencing them
+  
   Serial.begin(115200);
+
+  //set up led
+  ledcSetup(7, 5000, 8);
+  ledcAttachPin(4, 7);  //pin4 is LED
+
+  //set up motors
+//  pinMode(12, OUTPUT);
+//  ledcSetup(0, 5000, 13);
+//  ledcAttachPin(12, 0);
+  initMotors();
+
+  ledcWrite(0, 255);
+  delay(200);
+
+  //set up camera
+  initCamera();
+  
   // Connect to wifi
   WiFi.begin(ssid, password);
 
@@ -61,8 +90,16 @@ void setup() {
 
   Serial.println(HIGH);
   pinMode(4, OUTPUT);
-
-}
+  
+  
+  for (int i=0;i<5;i++) 
+  {
+    ledcWrite(7,10);  // flash led
+    delay(200);
+    ledcWrite(7,0);
+    delay(200);    
+  }  
+}   
 
 void loop() {
   
@@ -73,15 +110,11 @@ void loop() {
   
   Serial.println("testing 2");
   while(xclient.available()) {
-    
-    if(xclient.poll()){
-       
-      //msg = xclient.readBlocking();
-      Serial.println("polled" + msg.data() + " " + mess );
-      xclient.send("Echo: " + msg.data());
-    }
-    
+    xclient.poll();   
+    videoLoop();
+    //Serial.println("test ");
+    delay(1);
   }
-  Serial.println("test " + mess);
+  
   delay(1000);
 }

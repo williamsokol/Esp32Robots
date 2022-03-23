@@ -17,9 +17,21 @@
   https://github.com/gilmaimon/ArduinoWebsockets
 */
 
+
+
+
 #include <ArduinoWebsockets.h>
 #include <WiFi.h>
+#include <string.h>
+using namespace websockets;
 
+
+typedef struct Books {
+   char title[50];
+   char author[50];
+   char subject[100];
+   int book_id;
+} Book;
 
 void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
   // calculate duty, 8191 from 2 ^ 13 - 1
@@ -32,8 +44,8 @@ void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
 const char* ssid = "falcon1234"; //Enter SSID
 const char* password = "Tablelamp!"; //Enter Password
 
-using namespace websockets;
 
+String byteArray;
 WebsocketsServer server;
 void setup() {
   Serial.begin(115200);
@@ -57,6 +69,13 @@ void setup() {
   Serial.print("Is server live? ");
   Serial.println(server.available());
 
+
+  Book foo;
+  strcpy(foo.title, "this is a test");
+  byteArray = (char *)&foo; 
+  
+  Serial.println(byteArray);
+ 
   pinMode(4, OUTPUT);
   ledcSetup(0, 5000, 13);
   ledcAttachPin(4, 0);
@@ -73,12 +92,20 @@ void loop() {
   while(client.available()) {
     WebsocketsMessage msg = client.readBlocking();
 
+    Book foo;
+    strcpy(foo.title, "this is a test");
+    byteArray = "a"; // a for video
+
+    byteArray.concat((char *)&foo);
+
     // log
-    Serial.print("Got Message: ");
-    Serial.println(msg.data());
+    Serial.print("sendign Message: ");
+    Serial.println(byteArray);
 
     // return echo
-    client.send("Echo: " + msg.data());
+    
+    client.sendBinary((const char *)&byteArray[0], sizeof(Book));
+    
     //digitalWrite(4, msg.data().toInt());
     ledcAnalogWrite(0, msg.data().toInt());
     
