@@ -65,7 +65,7 @@ void videoLoop()
     Serial.println("Non-JPEG data not implemented");
     return;
   }
-  Serial.println(fb->len);
+  //Serial.println(fb->len);
   xclient.sendBinary((const char*) fb->buf, fb->len);
   esp_camera_fb_return(fb);
 }

@@ -16,6 +16,7 @@
   By Gil Maimon
   https://github.com/gilmaimon/ArduinoWebsockets
 */
+#include<vector>
 
 #include <ArduinoWebsockets.h>
 #include <WiFi.h>
@@ -24,12 +25,12 @@
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
 
-
-const char* ssid = "falcon1234"; //Enter SSID
-const char* password = "Tablelamp!"; //Enter Password
-
-
+using namespace std;
 using namespace websockets;
+
+
+const char* ssid = "sokol"; //Enter SSID
+const char* password = "falcon99"; //Enter Password
 
 WebsocketsServer xserver;
 WebsocketsClient xclient;
@@ -37,11 +38,32 @@ WebsocketsClient xclient;
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
+    int x,y;
+    char buff[10];
+    msg.data().toCharArray(buff, 10);
+//    Serial.print("callback ");
+    //Serial.println(buff);
+
+    if (sscanf(buff, "%d,%d", &x, &y) == 2) {
+        //Serial.println(x);
+        x = map(x, -100, 100, -255, 255);
+        y = map(y, -100, 100, -255, 255);
+        controllMotors(x,y);
+    }
+
+//    char* token = strtok( msg.data(), ",");
+//    inputs.pushback(token)
+//    while (token != NULL) {
+//        printf("%s\n", token);
+//        token = strtok(NULL, ",");
+//    }
+
+    
+   //int x = getline(s_stream, substr, ',');
+   //Serial.println("in: " + input);
    
-   Serial.println("callback " + msg.data());
-   int input = msg.data().toInt();
+   //ledcWrite(4,input);  // pin 12
    
-   ledcWrite(4,input);  // pin 12
    //xclient.send(msg.data());
    
 }
@@ -59,13 +81,7 @@ void setup() {
   ledcAttachPin(4, 7);  //pin4 is LED
 
   //set up motors
-//  pinMode(12, OUTPUT);
-//  ledcSetup(0, 5000, 13);
-//  ledcAttachPin(12, 0);
   initMotors();
-
-  ledcWrite(0, 255);
-  delay(200);
 
   //set up camera
   initCamera();

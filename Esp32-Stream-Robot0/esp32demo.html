@@ -10,18 +10,28 @@
       }
     </style>
     <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="https://bobboteck.github.io/joy/joy.js"></script>  
     <script>
       
       // log function
       log = function(data){
         $("div#terminal").prepend("</br>" +data);
+        
         console.log(data);
       };
+      
+      var ws;
+
+      function sendInputData()
+      {
+        var inputs = joy.GetX()+","+joy.GetY();
+        console.log(inputs);
+        ws.send(inputs);
+      }
 
       $(document).ready(function () {
         $("div#message_details").hide()
 
-        var ws;
 
         $("#open").click(function(evt) {
           evt.preventDefault();
@@ -44,7 +54,7 @@
             //console.log(evt);
             a = await arrayBuffer.arrayBuffer()
             
-            console.log(arrayBuffer);
+            //console.log(arrayBuffer);
 
             if(urlObject){
                 URL.revokeObjectURL(urlObject);
@@ -72,6 +82,8 @@
             $("#uri").css("background", "#00ff00");
             $("div#message_details").show();
             log("**Connection Opened**");
+
+            setInterval(function(){ sendInputData(); }, 50);
           };
         });
 
@@ -80,11 +92,14 @@
         //     log("Sending Message: "+$("#message").val());
         //     ws.send($("#message").val());
         // });
-        $("#slider").on('input' ,function(evt) {
-            log("Sending Message: "+$("#slider").val());
-            //console.log("test");
-            ws.send($("#slider").val());
-        });
+        // $("#slider").on('input' ,function(evt) {
+
+
+        //     log("Sending Message: "+$("#slider").val());
+        //     //console.log("test");
+        //     ws.send($("#slider").val());
+        // });
+  
 
       });
     </script>
@@ -109,6 +124,15 @@
         <input type="submit" id="send" value="send" />
         <input type="range" id="slider" value="128" min="1" max="254" oninput="this.nextElementSibling.value = this.value">
         <img src="">
+
+        <div id="joyDiv" style="width:200px;height:200px;margin-bottom:20px;"></div>
+        
+        <script type="text/javascript">
+          // Create JoyStick object into the DIV 'joyDiv'
+          var joy = new JoyStick('joyDiv');
+          
+
+        </script>
         <output>128</output>
         
     </div>

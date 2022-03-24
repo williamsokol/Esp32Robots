@@ -14,3 +14,16 @@ void initMotors()
   ledcAttachPin(MotPin2, 5); 
   ledcAttachPin(MotPin3, 6); 
 }
+
+void controllMotors(int x, int y)
+{
+  Serial.print(x);
+  Serial.print(" ");
+  Serial.println(y);
+
+  if(x > 0){
+    ledcWrite(3,x);
+    
+  }
+
+}
