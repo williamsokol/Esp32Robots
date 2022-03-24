@@ -46,25 +46,14 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 
     if (sscanf(buff, "%d,%d", &x, &y) == 2) {
         //Serial.println(x);
-        x = map(x, -100, 100, -255, 255);
+        x = map(x, -100, 100, 0, 255);
+        float xf = (float)x/(float)255;
+        
         y = map(y, -100, 100, -255, 255);
-        controllMotors(x,y);
+        
+        controllMotors(xf,(float)y);
     }
 
-//    char* token = strtok( msg.data(), ",");
-//    inputs.pushback(token)
-//    while (token != NULL) {
-//        printf("%s\n", token);
-//        token = strtok(NULL, ",");
-//    }
-
-    
-   //int x = getline(s_stream, substr, ',');
-   //Serial.println("in: " + input);
-   
-   //ledcWrite(4,input);  // pin 12
-   
-   //xclient.send(msg.data());
    
 }
 
