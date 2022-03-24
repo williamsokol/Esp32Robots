@@ -32,7 +32,7 @@ void controllMotors(float x, float y)
   constrain(l, 0,255);
   constrain(r, 0,255);
 
-  if(y > 0){
+  if(y < 0){
     ledcWrite(3,l);
     ledcWrite(4,0);
     ledcWrite(5,r);
