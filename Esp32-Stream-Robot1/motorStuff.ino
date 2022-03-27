@@ -19,22 +19,19 @@ void controllMotors(float x, float y)
 {
   // y is power in the forward/backwards
   // x is how much of the power should go in each wheel
-  
-  
-
   int l,r;
 
   
   l = (y+x)*255*2;
   r = (y-x)*255*2;
-
-  Serial.print(x);
-  Serial.print(" ");
-  Serial.print(y);
-  Serial.print(" ");
-  Serial.print(l);
-  Serial.print(" ");
-  Serial.println(r);
+  
+//  Serial.print(x);
+//  Serial.print(" ");
+//  Serial.print(y);
+//  Serial.print(" ");
+//  Serial.print(l);
+//  Serial.print(" ");
+//  Serial.println(r);
 
   constrain(l, 0,255);
   constrain(r, 0,255);

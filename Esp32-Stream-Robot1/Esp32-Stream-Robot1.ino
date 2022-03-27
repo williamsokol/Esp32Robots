@@ -24,6 +24,7 @@
 //these 2 libs down are to stop brownout on esp32
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
+#include <ESP32Servo.h>
 
 using namespace std;
 using namespace websockets;
@@ -35,6 +36,8 @@ const char* password = "12345678"; //Enter Password
 WebsocketsServer xserver;
 WebsocketsClient xclient;
 
+ESP32PWM pwm;
+int frameCount = 0;
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
@@ -46,21 +49,14 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 
     if (sscanf(buff, "%d,%d", &x, &y) == 2) {
         //Serial.println(x);
-//        x = map(x, -100, 100, 0, 255);
-//        float xf = (float)x/(float)255;
+
         float xf = (float)x/(float)100;
         
-        //y = map(y, -100, 100, 0, 255);
-        //float yf = (float)y/(float)255;
         float yf = (float)y/(float)100;;
         
         controllMotors(xf,yf);
     }
-
-   
 }
-
-
 
 
 void setup() {
@@ -68,15 +64,21 @@ void setup() {
   
   Serial.begin(115200);
 
+  ESP32PWM::timerCount[0]=4;
+  ESP32PWM::timerCount[1]=4;
+
   //set up led
-  ledcSetup(7, 5000, 8);
-  ledcAttachPin(4, 7);  //pin4 is LED
+//  ledcSetup(7, 5000, 8);
+//  ledcAttachPin(4, 7);  //pin4 is LED
 
   //set up motors
   initMotors();
 
   //set up camera
   initCamera();
+
+  //set up mpu6050
+  initMPU();
   
   // Connect to wifi
   WiFi.begin(ssid, password);
@@ -107,21 +109,30 @@ void setup() {
     ledcWrite(7,0);
     delay(200);    
   }  
+  
 }   
 
 void loop() {
   
-  
-
+  //recive data from client
   xclient = xserver.accept();
   xclient.onMessage(&callbackfunc);
   
   Serial.println("testing 2");
+
+  MPULoop(); 
+  // send data to client
   while(xclient.available()) {
-    xclient.poll();   
-    videoLoop();
+    xclient.poll();
+    if(frameCount%2 == 0){
+      videoLoop();
+    }else{
+      MPULoop();  
+    }
+
+    //frameCount += 1;
     //Serial.println("test ");
-    delay(1);
+    delay(20);
   }
   
   delay(1000);
