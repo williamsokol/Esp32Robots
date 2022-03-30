@@ -24,7 +24,7 @@
 //these 2 libs down are to stop brownout on esp32
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
-#include <ESP32Servo.h>
+
 
 using namespace std;
 using namespace websockets;
@@ -36,7 +36,7 @@ const char* password = "12345678"; //Enter Password
 WebsocketsServer xserver;
 WebsocketsClient xclient;
 
-ESP32PWM pwm;
+
 int frameCount = 0;
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
@@ -64,8 +64,7 @@ void setup() {
   
   Serial.begin(115200);
 
-  ESP32PWM::timerCount[0]=4;
-  ESP32PWM::timerCount[1]=4;
+
 
   //set up led
 //  ledcSetup(7, 5000, 8);
@@ -116,21 +115,21 @@ void loop() {
   
   //recive data from client
   xclient = xserver.accept();
-  xclient.onMessage(&callbackfunc);
+  //xclient.onMessage(&callbackfunc);
   
   Serial.println("testing 2");
 
-  MPULoop(); 
+ 
   // send data to client
   while(xclient.available()) {
     xclient.poll();
-    if(frameCount%2 == 0){
-      videoLoop();
+    if(frameCount%10 == 0){
+      MPULoop();
     }else{
-      MPULoop();  
+      videoLoop();  
     }
 
-    //frameCount += 1;
+    frameCount += 1;
     //Serial.println("test ");
     delay(20);
   }

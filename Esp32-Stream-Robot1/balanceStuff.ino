@@ -7,7 +7,7 @@
 Adafruit_MPU6050 mpu;
 
 #define I2C_SDA 15
-#define I2C_SCL 16
+#define I2C_SCL 13
 
 TwoWire I2CMPU = TwoWire(0);
 
