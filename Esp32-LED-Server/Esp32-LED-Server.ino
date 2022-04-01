@@ -29,8 +29,8 @@ void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
   ledcWrite(channel, duty);
 }
 
-const char* ssid = "falcon1234"; //Enter SSID
-const char* password = "Tablelamp!"; //Enter Password
+const char* ssid = "sokol"; //Enter SSID
+const char* password = "falcon99"; //Enter Password
 
 using namespace websockets;
 
@@ -57,11 +57,15 @@ void setup() {
   Serial.print("Is server live? ");
   Serial.println(server.available());
 
+  pinMode(12, OUTPUT);
+  pinMode(14, OUTPUT);
+  pinMode(0, OUTPUT);
+  pinMode(2, OUTPUT);
   pinMode(4, OUTPUT);
-  ledcSetup(0, 5000, 13);
-  ledcAttachPin(4, 0);
+  ledcSetup(2, 5000, 13);
+  ledcAttachPin(2, 0);
   
-  ledcAnalogWrite(0, 10);
+  ledcAnalogWrite(0, 255);
   
     
 }

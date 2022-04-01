@@ -32,13 +32,13 @@ void MPULoop(){
   mpu.getEvent(&a, &g, &temp);  
 
     /* Print out the values */
-  Serial.print("Acceleration X: ");
-  Serial.print(a.acceleration.x);
-  Serial.print(", Y: ");
-  Serial.print(a.acceleration.y);
-  Serial.print(", Z: ");
-  Serial.print(a.acceleration.z);
-  Serial.println(" m/s^2");
+//  Serial.print("Acceleration X: ");
+//  Serial.print(a.acceleration.x);
+//  Serial.print(", Y: ");
+//  Serial.print(a.acceleration.y);
+//  Serial.print(", Z: ");
+//  Serial.print(a.acceleration.z);
+//  Serial.println(" m/s^2");
 
   
 }

@@ -115,7 +115,7 @@ void loop() {
   
   //recive data from client
   xclient = xserver.accept();
-  //xclient.onMessage(&callbackfunc);
+  xclient.onMessage(&callbackfunc);
   
   Serial.println("testing 2");
 
