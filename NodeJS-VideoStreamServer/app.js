@@ -23,7 +23,7 @@ let sockets = [];
 const ip = req.socket.remoteAddress;
 
 
-wsServerRobot.on('connection', function connection(ws) {
+wsServer.on('connection', function connection(ws) {
     // const ip = req.socket.remoteAddress;
     ws.on('message', function message(data, isBinary) {
 
