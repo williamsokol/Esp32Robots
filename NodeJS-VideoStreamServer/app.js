@@ -17,11 +17,10 @@ let sockets = [];
 //     robotIP: '',
 //     uiIP,
 //     dataflow: ["inbound","outbound","both"],
-//     ws,
+//     wsRobot,
+//     wsUI,
 // };
     
-const ip = req.socket.remoteAddress;
-
 
 wsServer.on('connection', function connection(ws) {
     // const ip = req.socket.remoteAddress;
@@ -50,7 +49,7 @@ function sendDataToUIIP(ws, data){
     let socketObj = sockets.find((socketObj)=>{
         return socketObj.robotIP === robotIP;
     });
-    let WSclientUI = socketObj.ws; 
+    let WSclientUI = socketObj.wsUI; 
     WSclientUI.send(data);
 }
 
