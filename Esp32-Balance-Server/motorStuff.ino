@@ -9,9 +9,9 @@ void initMotors()
   pinMode(MotPin1, OUTPUT);
   pinMode(MotPin2, OUTPUT);
   //pinMode(MotPin3, OUTPUT);
-  ledcSetup(6, 2000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcSetup(4, 2000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcSetup(5, 2000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(6, 20000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(4, 20000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(5, 20000, 8); // 2000 hz PWM, 8-bit resolution
   //ledcSetup(6, 2000, 8); // 2000 hz PWM, 8-bit resolution
   ledcAttachPin(MotPin0, 6); //left 
   ledcAttachPin(MotPin1, 4); //left
@@ -24,21 +24,22 @@ void controllMotors(float x, float y)
   // y is power in the forward/backwards
   // x is how much of the power should go in each wheel
   int m;
-  float lr;
+  float lr, turn;
 
   
 
   m = abs(y) * 255;
-  lr = (x+1)/2;
+  turn = x * 255;
 
   lr = constrain(lr, 0,1);
 //  constrain(m, 0,255);
 
-  int l = (m*1.5)*(1-(lr));
-  int r = (m*1.5)*(lr);
+  int l = (m-turn);
+  int r = (m+turn);
 
-  l = constrain(l, 0,255);
-  r = constrain(r, 0,255);
+  l = constrain(l, 0,200);// 255 is the max
+  r = constrain(r, 0,200);
+  m = constrain(m, 0,200);
 
 //  Serial.print(x);
 //  Serial.print(" ");
