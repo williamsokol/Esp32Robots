@@ -37,9 +37,9 @@ void controllMotors(float x, float y)
   int l = (m-turn);
   int r = (m+turn);
 
-  l = constrain(l, 0,200);// 255 is the max
-  r = constrain(r, 0,200);
-  m = constrain(m, 0,200);
+  l = constrain(l, 0,255);// 255 is the max
+  r = constrain(r, 0,255);
+  m = constrain(m, 0,255);
 
 //  Serial.print(x);
 //  Serial.print(" ");
