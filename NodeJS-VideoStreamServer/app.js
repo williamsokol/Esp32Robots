@@ -9,6 +9,8 @@
  * is transferred.
  */
 
+const express = require('express');
+const app = express();
 const wsServer = require("ws").WebSocketServer({port: 8080});
 
 let sockets = [];
@@ -17,21 +19,19 @@ let sockets = [];
 //     robotIP: '',
 //     uiIP,
 //     dataflow: ["inbound","outbound","both"],
-//     wsRobot,
-//     wsUI,
+//     ws,
 // };
     
+// const ip = req.socket.remoteAddress;
+
 
 wsServer.on('connection', function connection(ws) {
     // const ip = req.socket.remoteAddress;
     ws.on('message', function message(data, isBinary) {
 
         if (isRobotIP) sendDataToUIIP(ws, data, isBinary);
-        else if (isClientIP) registerRobotAndSocketIP(ws, data, isBinary)
         else unhandledRouteError(ws, data, isBinary);
-
         // client.send(data, { binary: isBinary });
-
     });
 
     ws.on('error', function(){
@@ -40,19 +40,31 @@ wsServer.on('connection', function connection(ws) {
 });
 
 
+app.get(`/roboregister`,(req, res)=>{
+    updateConnectionPairs(req);
+});
+app.get(`/uiregister`,(req, res)=>{
+    updateConnectionPairs(req);
+});
+app.get(`/unregister`,(req,res)=>{
+    deleteConnectionPairs(req);
+});
 
 
-function registerRobotAndSocketIP(){
 
+function updateConnectionPairs(){
+
+}
+function deleteConnectionPairs(){
+    
 }
 function sendDataToUIIP(ws, data){
     let socketObj = sockets.find((socketObj)=>{
         return socketObj.robotIP === robotIP;
     });
-    let WSclientUI = socketObj.wsUI; 
+    let WSclientUI = socketObj.ws; 
     WSclientUI.send(data);
 }
-
 function unhandledRouteError(ws, data){
     console.log("Unhandled route");
 }
