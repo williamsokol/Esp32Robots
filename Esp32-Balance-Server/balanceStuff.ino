@@ -1,7 +1,5 @@
 #include "Adafruit_MPU6050.h"
 #include "Adafruit_Sensor.h"
-
-
 #include <Wire.h>
 
 Adafruit_MPU6050 mpu;
@@ -12,6 +10,8 @@ Adafruit_MPU6050 mpu;
 TwoWire I2CMPU = TwoWire(0);
 double lastError = 0;
 double targetAngle = -7;
+
+
 
 
 void initMPU(){
@@ -50,11 +50,7 @@ void MPULoop(){
     Serial.println(" m/s^2");
   }
 
-  double K = 1.0;  // Overall torque gain factor
-  double Kp = 25.0;
-  //double Kp2 = 16.0;
-  double Ki = 3.0;
-  double Kd = 0.0;
+  
   double pTerm, iTerm, dTerm, output, angleError;
   
   double accelYAngle = -atan2(a.acceleration.x, a.acceleration.y);
@@ -68,7 +64,7 @@ void MPULoop(){
 
   static double adaptiveAngleBias = 0;
 
-  angleError = (targetAngle + adaptiveAngleBias)-angle; // subtract angle by offset
+  angleError = ((targetAngle + adaptiveAngleBias)-angle); // subtract angle by offset
   pTerm = angleError*Kp;
 
   dTerm = Kd * (angleError - lastError);

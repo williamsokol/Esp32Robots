@@ -38,23 +38,27 @@ WebsocketsClient xclient;
 
 
 int frameCount = 0;
+// pid adjustables
+double K = 1.0;  // Overall torque gain factor
+double Kp = 0.15;
+//double Kp2 = 16.0;
+extern double Ki = 3.0;
+double Kd = 0.0;
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
-    int x,y;
+    float p,i,d;
     char buff[10];
     msg.data().toCharArray(buff, 10);
-//    Serial.print("callback ");
+    Serial.print("callback ");
     //Serial.println(buff);
 
-    if (sscanf(buff, "%d,%d", &x, &y) == 2) {
-        //Serial.println(x);
-
-        float xf = (float)x/(float)100;
-        
-        float yf = (float)y/(float)100;;
-        
-        //controllMotors(xf,yf); //disable for balancing motors
+    if (sscanf(buff, "%f,%f,%f", &p, &i, &d) == 3) {
+           
+        Serial.println("p: "+String(p)+" i: "+String(i)+" d: "+String(d));
+        Kp = p;
+        Ki = i;
+        Kd = d;
     }
 }
 
@@ -123,15 +127,15 @@ void loop() {
   // send data to client
   while(xclient.available()) {
     xclient.poll();
-    if(frameCount%10 == 0){
+    if(frameCount%2 == 0){
       MPULoop();
-    }//else{
-//      videoLoop();  
-//    }
+    }else{
+      videoLoop();  
+    }
 
     frameCount += 1;
     //Serial.println("test ");
-    delay(10);
+    delay(1);
   }
   
   delay(1000);

@@ -9,10 +9,10 @@ void initMotors()
   pinMode(MotPin1, OUTPUT);
   pinMode(MotPin2, OUTPUT);
   //pinMode(MotPin3, OUTPUT);
-  ledcSetup(6, 20000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcSetup(4, 20000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcSetup(5, 20000, 8); // 2000 hz PWM, 8-bit resolution
-  //ledcSetup(6, 2000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(6, 2000000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(4, 2000000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(5, 2000000, 8); // 2000 hz PWM, 8-bit resolution
+  //ledcSetup(6, 20000, 8); // 2000 hz PWM, 8-bit resolution
   ledcAttachPin(MotPin0, 6); //left 
   ledcAttachPin(MotPin1, 4); //left
   ledcAttachPin(MotPin2, 5); //right

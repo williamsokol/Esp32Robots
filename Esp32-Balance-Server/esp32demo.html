@@ -31,7 +31,7 @@
       }
 
       $(document).ready(function () {
-        $("div#message_details").hide()
+        //$("div#message_details").hide()
 
 
         $("#open").click(function(evt) {
@@ -84,7 +84,7 @@
             $("div#message_details").show();
             log("**Connection Opened**");
 
-            wsinterval = setInterval(function(){ sendInputData(); }, 50);
+            //wsinterval = setInterval(function(){ sendInputData(); }, 50);
           };
         });
 
@@ -93,13 +93,17 @@
         //     log("Sending Message: "+$("#message").val());
         //     ws.send($("#message").val());
         // });
-        // $("#slider").on('input' ,function(evt) {
+        window.sendPID = function (evt) {
 
-
-        //     log("Sending Message: "+$("#slider").val());
-        //     //console.log("test");
-        //     ws.send($("#slider").val());
-        // });
+            var p,i,d;
+            p = document.getElementById("Proportion").value;
+            i = document.getElementById("Integral").value;
+            d = document.getElementById("Derivative").value;
+            var inputData = p+","+i+","+d;
+            log("Sending Message: " + inputData);
+            //console.log("test");
+            ws.send(inputData);
+        }
   
 
       });
@@ -119,22 +123,34 @@
     </div>
     <div id="message_details">
         </br></br>
-        
-        <label for="message">message:</label>
-        <input type="text" id="message" value="Hello World!"/><br />
-        <input type="submit" id="send" value="send" />
-        <input type="range" id="slider" value="128" min="1" max="254" oninput="this.nextElementSibling.value = this.value">
-        <img src="">
 
-        <div id="joyDiv" style="width:400px;height:400px;margin-bottom:20px;"></div>
+        <img src="">
+        <br>
+
+        <!-- <div id="joyDiv" style="width:400px;height:400px;margin-bottom:20px;"></div> -->
+
         
-        <script type="text/javascript">
+        <label for="message">Proportion:</label>
+        <input type="text" id="Proportion" value=".15"/>
+       
+        <br>
+        <label for="message">Integral:</label>
+        <input type="text" id="Integral" value="0"/>
+       
+        <br>
+        <label for="message">Derivative:</label>
+        <input type="text" id="Derivative" value="0"/>
+        
+        <br>
+        <input type="submit" id="send" value="send" onclick="sendPID()" /><br>
+        
+        <!-- <script type="text/javascript">
           // Create JoyStick object into the DIV 'joyDiv'
           var joy = new JoyStick('joyDiv');
           
 
-        </script>
-        <output>128</output>
+        </script> -->
+        <!-- <output>128</output> -->
         
     </div>
     <div id="terminal">
