@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WebSockets Hello World</title>
+    <meta charset="utf-8" />
+    <style type="text/css">
+      body {
+        text-align: center;
+        min-width: 500px;
+      }
+    </style>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="https://bobboteck.github.io/joy/joy.js"></script>  
+    <script>
+      
+      // log function
+      log = function(data){
+        $("div#terminal").prepend("</br>" +data);
+        
+        console.log(data);
+      };
+      
+      var ws;
+      var wsinterval;
+
+      function sendInputData()
+      {
+        var inputs = joy.GetX()+","+joy.GetY();
+        console.log(inputs);
+        ws.send(inputs);
+      }
+
+      $(document).ready(function () {
+        $("div#message_details").hide()
+
+
+        $("#open").click(function(evt) {
+          evt.preventDefault();
+
+          let uri = $("#domain").val();
+          let ws = new Websocket(`${uri}`)
+
+          
+
+          const img = document.querySelector('img');
+          let urlObject;
+          // Handle incoming websocket message callback
+          ws.onmessage = async function(evt) {
+            // log("Message Received: " + evt.data)
+            // $("#slider").val() = evt.data;
+            
+            const arrayBuffer = evt.data;
+            //console.log(evt);
+            a = await arrayBuffer.arrayBuffer()
+            
+            //console.log(arrayBuffer);
+
+            if(urlObject){
+                URL.revokeObjectURL(urlObject);
+            }
+            urlObject = URL.createObjectURL(arrayBuffer);
+            
+            img.src = urlObject;
+          };
+
+          // Close Websocket callback
+          ws.onclose = function(evt) {
+            log("**Connection Closed**");
+            alert("Connection close");
+            $("#uri").css("background", "#ff0000");
+            
+            clearInterval(wsinterval);
+            };
+
+          // Open Websocket callback
+          ws.onopen = function(evt) {
+            $("#uri").css("background", "#00ff00");
+            $("div#message_details").show();
+            log("**Connection Opened**");
+
+            wsinterval = setInterval(function(){ sendInputData(); }, 50);
+          };
+        });
+
+        // Send websocket message function
+        // $("#send").click(function(evt) {
+        //     log("Sending Message: "+$("#message").val());
+        //     ws.send($("#message").val());
+        // });
+        // $("#slider").on('input' ,function(evt) {
+
+
+        //     log("Sending Message: "+$("#slider").val());
+        //     //console.log("test");
+        //     ws.send($("#slider").val());
+        // });
+  
+
+      });
+    </script>
+  </head>
+
+  <body>
+    <h1>WebSockets Hello World</h1>
+    <div id="connection_details">
+      <label for="uri">uri:</label>
+      <input type="text" id="uri" value="ws://<ipv4 or domain>/path" style="background:#ff0000;"/><br />
+      <input type="submit" id="open" value="open" />
+    </div>
+
+    <div>
+      <p>
+        To connect webui to robot locally, both the webui and robot must be connected to
+        the same wifi. Enter the local wifi ip address into the uri.
+      </p>
+      <p>
+        To connect webui to robot over internet, enter robot platform servers uri.
+        example ... ws://dnull.com/telepresrence
+      </p>
+    </div>
+
+
+
+    <div id="message_details">
+        </br></br>
+        
+        <label for="message">message:</label>
+        <input type="text" id="message" value="Hello World!"/><br />
+        <input type="submit" id="send" value="send" />
+        <input type="range" id="slider" value="128" min="1" max="254" oninput="this.nextElementSibling.value = this.value">
+        <img src="">
+
+        <div id="joyDiv" style="width:400px;height:400px;margin-bottom:20px;"></div>
+        
+        <script type="text/javascript">
+          // Create JoyStick object into the DIV 'joyDiv'
+          var joy = new JoyStick('joyDiv');
+          
+
+        </script>
+        <output>128</output>
+        
+    </div>
+    <div id="terminal">
+
+    </div>
+  </body>
+</html>

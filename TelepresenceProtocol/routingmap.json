@@ -1,0 +1,140 @@
+{
+
+    "roles": {
+        "robotclient":{},
+        "uiclient":{},
+        "siteserver":{},
+        "registryserver":{},
+        "videostreamserver":{},
+        "commandstreamserver":{}
+    },
+
+
+    "routes":{
+
+        "/": {
+            "protocol": "http",
+            "verb": "GET",
+            "roles": {
+                "siteserver": {
+                    "procedures":[
+                        "serverhtmlapp"
+                    ]
+                }
+            }
+        },
+
+        "/onerror": {
+            "protocol": "http",
+            "verb": "DELETE",
+            "roles": {
+                "registryserver": {
+                    "procedures":["deleteSocketPairs"]
+                },
+                "commandstreamserver": {
+                    "procedures":["deleteSocketPairs"]
+                },
+                "videostreamserver": {
+                    "procedures":["deleteSocketPairs"]
+                }
+            }
+        },
+
+        "/robotregister":{
+            "protocol": "http",
+            "verb": "GET",
+            "roles":{
+                "robotclient": {
+                    "procedures":["pingRegistry"]
+                },
+                "registryserver":{
+                    "procedures":[
+                        "registerRobot"
+                    ]
+                },
+                "videostreamserver": {
+                    "procedures": [
+                        "registerRobot"
+                    ]
+                },
+                "commandstreamserver": {
+                    "procedures": [
+                        "registerRobot"
+                    ]
+                }
+            }
+        },
+
+        "/uiregister":{
+            "protocol": "http",
+            "verb": "GET",
+            "roles":{
+                "registryserver":{
+                    "procedures":[
+                        "registerUI"
+                    ]
+                },
+                "videostreamserver": {
+                    "procedures": [
+                        "registerUI"
+                    ]
+                },
+                "commandstreamserver": {
+                    "procedures": [
+                        "registerUI"
+                    ]
+                }
+            }
+        },
+
+        "/unregister":{
+            "protocol": "http",
+            "verb": "DELETE",
+            "roles":{
+                "registryserver":{
+                    "procedures":[
+                        "unregister"
+                    ]
+                },
+                "videostreamserver": {
+                    "procedures": [
+                        "unregister"
+                    ]
+                },
+                "commandstreamserver": {
+                    "procedures": [
+                        "unregister"
+                    ]
+                }
+            }
+        }
+    },
+    "/streamvideo": {
+        "protocol": "ws",
+        "verb": "POST",
+        "roles":{
+            "uiclient": {
+                "procedures":["displayVideo"]
+            },
+            "videostreamserver": {
+                "procedures":["relayVideoBinary"]
+            },
+            "robotclient": {
+                "procedures":["sendVideoBinary"]
+            }
+        }
+    },
+    "/streamcommands": {
+        "protocol": "ws",
+        "verb": "POST",
+        "uiclient": {
+            "procedures":["sendCommands"]
+        },
+        "videostreamserver": {
+            "procedures":["relayCommands"]
+        },
+        "robotclient": {
+            "procedures":["executeCommands"]
+        }
+    }
+}
