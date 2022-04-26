@@ -42,20 +42,25 @@ int frameCount = 0;
 double K = 1.0;  // Overall torque gain factor
 double Kp = 0.15;
 //double Kp2 = 16.0;
-extern double Ki = 3.0;
+extern double Ki = 0.0;
 double Kd = 0.0;
+
+double mapf(double x, double in_min, double in_max, double out_min, double out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
-    float p,i,d;
-    char buff[10];
-    msg.data().toCharArray(buff, 10);
+    double p,i,d;
+    char buff[100];
+    msg.data().toCharArray(buff, 100);
     Serial.print("callback ");
     //Serial.println(buff);
 
-    if (sscanf(buff, "%f,%f,%f", &p, &i, &d) == 3) {
+    if (sscanf(buff, "%lf,%lf,%lf", &p, &i, &d) == 3) {
            
-        Serial.println("p: "+String(p)+" i: "+String(i)+" d: "+String(d));
+        Serial.println("p: "+String(p,5)+" i: "+String(i,5)+" d: "+String(d,5));
         Kp = p;
         Ki = i;
         Kd = d;
@@ -127,15 +132,15 @@ void loop() {
   // send data to client
   while(xclient.available()) {
     xclient.poll();
-    if(frameCount%2 == 0){
-      MPULoop();
-    }else{
-      videoLoop();  
-    }
+  
+    MPULoop();
+  
+    videoLoop();  
+    
 
     frameCount += 1;
     //Serial.println("test ");
-    delay(1);
+    delay(10);
   }
   
   delay(1000);

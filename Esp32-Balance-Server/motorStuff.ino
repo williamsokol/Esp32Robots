@@ -68,3 +68,18 @@ void controllMotors(float x, float y)
   }
 
 }
+
+void Motors(int x, int y){
+    if(y < 0){
+    ledcWrite(4,0);
+    ledcWrite(6,y);
+    ledcWrite(5,0 );
+    //ledcWrite(6,0);
+  }else{
+    ledcWrite(4,y);
+    ledcWrite(6,0);
+    ledcWrite(5,y);
+    
+    //ledcWrite(6,r);
+}  
+}

@@ -20,6 +20,9 @@
 #include <ArduinoWebsockets.h>
 #include <WiFi.h>
 
+//these 2 libs down are to stop brownout on esp32
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
 
 void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
   // calculate duty, 8191 from 2 ^ 13 - 1
@@ -29,13 +32,15 @@ void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
   ledcWrite(channel, duty);
 }
 
-const char* ssid = "sokol"; //Enter SSID
-const char* password = "falcon99"; //Enter Password
+const char* ssid = "falcon1234"; //Enter SSID
+const char* password = "Tablelamp!"; //Enter Password
 
 using namespace websockets;
 
 WebsocketsServer server;
 void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // prevent brownouts by silencing them
+  
   Serial.begin(115200);
   // Connect to wifi
   WiFi.begin(ssid, password);
@@ -62,9 +67,12 @@ void setup() {
   pinMode(0, OUTPUT);
   pinMode(2, OUTPUT);
   pinMode(4, OUTPUT);
-  ledcSetup(2, 5000, 13);
-  ledcAttachPin(2, 0);
   
+  // set up pin
+  ledcSetup(0, 5000, 13);
+  ledcAttachPin(2, 0);
+
+  //default value
   ledcAnalogWrite(0, 255);
   
     

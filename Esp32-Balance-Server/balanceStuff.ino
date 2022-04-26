@@ -8,8 +8,8 @@ Adafruit_MPU6050 mpu;
 #define I2C_SCL 13
 
 TwoWire I2CMPU = TwoWire(0);
-double lastError = 0;
-double targetAngle = -7;
+
+double targetAngle = -8.0;
 
 
 
@@ -38,7 +38,6 @@ void MPULoop(){
   mpu.getEvent(&a, &g, &temp); 
 
       /* Print out the values */
-  
   if (frameCount % 10 == 0)
   {    
     Serial.print("Acceleration X: ");
@@ -50,43 +49,62 @@ void MPULoop(){
     Serial.println(" m/s^2");
   }
 
-  
   double pTerm, iTerm, dTerm, output, angleError;
   
   double accelYAngle = -atan2(a.acceleration.x, a.acceleration.y);
 
+  // calculate the angle so that:    0 = vertical    -90 = on its back    90 = on its face
   double degAngle = accelYAngle*57.29578;
   degAngle = ((degAngle+180)>180? degAngle-360: degAngle)+180;
-  static double angle = degAngle;
-
   double scaledZGyro = (-g.gyro.z * 57.29578)/8;
+  
+  static double angle = degAngle; 
   angle = (0.98 * (angle + scaledZGyro)) + (0.02 * degAngle);
 
-  static double adaptiveAngleBias = 0;
+  
 
+  // get the error (difference between desired and current angle)
+  static double adaptiveAngleBias = 0;
   angleError = ((targetAngle + adaptiveAngleBias)-angle); // subtract angle by offset
+  
+  // calculate the proportional component
   pTerm = angleError*Kp;
 
-  dTerm = Kd * (angleError - lastError);
-  lastError = angleError;
+  // calculate the integral component (summation of past errors * i scalar)
+  static double integral = 0;
+  integral += angleError * Ki;
+  if(integral >  1) integral = 1; // limit wind-up
+  if(integral < -1) integral = -1;
+  iTerm = integral;
+
+  // calculate the derivative component
+  static double previousError = 0;
+  dTerm = Kd * (angleError - previousError);
+  previousError = angleError;
+
+  output = K*(pTerm + iTerm + dTerm);
 
   //adaptiveAngleBias -= output * 1.5e-4;
 
-  output = K*(pTerm + dTerm);
 
+  float outmap = mapf(abs(output),0,1,.11,1);  //map out deadband
+  int outsign = (output>0) - (output< 0); // get sign of number
+  outmap  = outmap * outsign;
+  
+  // stop the motors if we're far from vertical since there is no chance of success
+  if (angle > targetAngle-7 && angle < targetAngle+7){
+    Motors(0, outmap);
+  }else{
+    Motors(0, 0);
+  }
+  
   if (frameCount % 10 == 0)
   {
-    Serial.print(", angle: ");
-    Serial.print(angle);
-    Serial.print(", angle error ");
-    Serial.println(output);
+     Serial.print(", output ");
+    Serial.print(output,5);
+    Serial.print(", output mapped ");
+    Serial.print(outmap,5);
+    Serial.print(", angle ");
+    Serial.println(angle,5);
   }
-
-  if (degAngle > targetAngle-10 && degAngle < targetAngle+10){
-    controllMotors(0, output);
-  }else{
-    controllMotors(0, 0);
-  }
-    
-  
 }
