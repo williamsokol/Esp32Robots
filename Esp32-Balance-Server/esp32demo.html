@@ -95,11 +95,12 @@
         // });
         window.sendPID = function (evt) {
 
-            var p,i,d;
+            var p,i,d,t;
             p = document.getElementById("Proportion").value;
             i = document.getElementById("Integral").value;
             d = document.getElementById("Derivative").value;
-            var inputData = p+","+i+","+d;
+            t = document.getElementById("Target").value;
+            var inputData = p+","+i+","+d+","+t;
             log("Sending Message: " + inputData);
             //console.log("test");
             ws.send(inputData);
@@ -140,6 +141,10 @@
         <br>
         <label for="message">Derivative:</label>
         <input type="text" id="Derivative" value="0"/>
+
+        <br>
+        <label for="message">Target Angle:</label>
+        <input type="text" id="Target" value="0"/>
         
         <br>
         <input type="submit" id="send" value="send" onclick="sendPID()" /><br>

@@ -9,7 +9,7 @@ Adafruit_MPU6050 mpu;
 
 TwoWire I2CMPU = TwoWire(0);
 
-double targetAngle = -8.0;
+
 
 
 
@@ -72,39 +72,38 @@ void MPULoop(){
 
   // calculate the integral component (summation of past errors * i scalar)
   static double integral = 0;
-  integral += angleError * Ki;
-  if(integral >  1) integral = 1; // limit wind-up
-  if(integral < -1) integral = -1;
-  iTerm = integral;
+  integral += angleError;
+  integral = constrain(integral, -200,200);
+  iTerm = integral*Ki;
 
   // calculate the derivative component
-  static double previousError = 0;
-  dTerm = Kd * (angleError - previousError);
-  previousError = angleError;
+  static double previousAngle = 0;
+  dTerm = Kd * (angle - previousAngle);
+  previousAngle = angle;
 
   output = K*(pTerm + iTerm + dTerm);
 
   //adaptiveAngleBias -= output * 1.5e-4;
 
 
-  float outmap = mapf(abs(output),0,1,.11,1);  //map out deadband
-  int outsign = (output>0) - (output< 0); // get sign of number
-  outmap  = outmap * outsign;
+  //float outmap = mapf(abs(output),0,1,.11,1);  //map out deadband
+  //int outsign = (output>0) - (output< 0); // get sign of number
+  //outmap  = outmap * outsign;
   
   // stop the motors if we're far from vertical since there is no chance of success
-  if (angle > targetAngle-7 && angle < targetAngle+7){
-    Motors(0, outmap);
+  if (angle > targetAngle-5 && angle < targetAngle+5){
+    Motors(0, output);
   }else{
     Motors(0, 0);
   }
   
-  if (frameCount % 10 == 0)
-  {
-     Serial.print(", output ");
-    Serial.print(output,5);
-    Serial.print(", output mapped ");
-    Serial.print(outmap,5);
-    Serial.print(", angle ");
-    Serial.println(angle,5);
-  }
+//  if (frameCount % 10 == 0)
+//  {
+//     Serial.print(", output ");
+//    Serial.print(output,5);
+////    Serial.print(", output mapped ");
+////    Serial.print(outmap,5);
+//    Serial.print(", angle ");
+//    Serial.println(angle,5);
+//  }
 }

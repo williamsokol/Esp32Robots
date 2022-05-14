@@ -30,8 +30,8 @@ using namespace std;
 using namespace websockets;
 
 
-const char* ssid = "falcon1234"; //Enter SSID
-const char* password = "Tablelamp!"; //Enter Password
+const char* ssid = "temptest"; //Enter SSID
+const char* password = "12345678"; //Enter Password
 
 WebsocketsServer xserver;
 WebsocketsClient xclient;
@@ -40,10 +40,12 @@ WebsocketsClient xclient;
 int frameCount = 0;
 // pid adjustables
 double K = 1.0;  // Overall torque gain factor
-double Kp = 0.15;
+double Kp = 27;
 //double Kp2 = 16.0;
-extern double Ki = 0.0;
-double Kd = 0.0;
+extern double Ki = .9;
+double Kd = -.42;
+double targetAngle = -8.3;  
+
 
 double mapf(double x, double in_min, double in_max, double out_min, double out_max)
 {
@@ -52,18 +54,19 @@ double mapf(double x, double in_min, double in_max, double out_min, double out_m
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
-    double p,i,d;
+    double p,i,d,t;
     char buff[100];
     msg.data().toCharArray(buff, 100);
     Serial.print("callback ");
     //Serial.println(buff);
 
-    if (sscanf(buff, "%lf,%lf,%lf", &p, &i, &d) == 3) {
+    if (sscanf(buff, "%lf,%lf,%lf,%lf", &p, &i, &d, &t) == 4) {
            
-        Serial.println("p: "+String(p,5)+" i: "+String(i,5)+" d: "+String(d,5));
+        Serial.println("p: "+String(p,5)+" i: "+String(i,5)+" d: "+String(d,5)+" angle: "+String(t,5));
         Kp = p;
         Ki = i;
         Kd = d;
+        targetAngle = t;
     }
 }
 
@@ -128,20 +131,27 @@ void loop() {
   
   Serial.println("testing 2");
 
- 
-  // send data to client
-  while(xclient.available()) {
-    xclient.poll();
-  
-    MPULoop();
-  
-    videoLoop();  
+  while (true){
+    static int oldtime = millis();
+    // send data to client
+    if(xclient.available()) {
+      xclient.poll(); // required to recive messages
+    }
     
-
+    int timechange = millis()-oldtime;
+    if(timechange > 10){
+       
+      MPULoop();
+      
+      oldtime = millis(); 
+      Serial.print("delta time ");
+      Serial.println(timechange);
+    }else if(timechange < 30){
+      //videoLoop();
+    }
     frameCount += 1;
-    //Serial.println("test ");
-    delay(10);
+    
+    
+    delay(1);
   }
-  
-  delay(1000);
 }

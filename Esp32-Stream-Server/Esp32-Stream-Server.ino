@@ -21,8 +21,8 @@
 #include <WiFi.h>
 //#include "cameraStuff"
 
-const char* ssid = "falcon1234"; //Enter SSID
-const char* password = "Tablelamp!"; //Enter Password
+const char* ssid = "Hacker Dojo Free"; //Enter SSID
+const char* password = "L337 for Speed"; //Enter Password
 
 
 using namespace websockets;
