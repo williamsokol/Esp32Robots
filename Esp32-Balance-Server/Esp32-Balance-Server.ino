@@ -16,6 +16,8 @@
   By Gil Maimon
   https://github.com/gilmaimon/ArduinoWebsockets
 */
+
+
 #include<vector>
 
 #include <ArduinoWebsockets.h>
@@ -30,21 +32,24 @@ using namespace std;
 using namespace websockets;
 
 
-const char* ssid = "temptest"; //Enter SSID
-const char* password = "12345678"; //Enter Password
+const char* ssid = "falcon1234"; //Enter SSID
+const char* password = "Tablelamp!"; //Enter Password
 
 WebsocketsServer xserver;
 WebsocketsClient xclient;
 
 
 int frameCount = 0;
+bool balancing = false;
+
 // pid adjustables
 double K = 1.0;  // Overall torque gain factor
-double Kp = 27;
+double Kp = 35;
 //double Kp2 = 16.0;
-extern double Ki = .9;
-double Kd = -.42;
-double targetAngle = -8.3;  
+extern double Ki = 2;
+double Kd = -4;
+double targetAngle = 9.1;  
+int deltaTime = 10; // milliseconds
 
 
 double mapf(double x, double in_min, double in_max, double out_min, double out_max)
@@ -95,7 +100,7 @@ void setup() {
   WiFi.begin(ssid, password);
 
   // Wait some time to connect to wifi
-  for(int i = 0; i < 15 && WiFi.status() != WL_CONNECTED; i++) {
+  for(int i = 0; i < 5 && WiFi.status() != WL_CONNECTED; i++) {
       Serial.print(".");
       delay(1000);
   }
@@ -115,9 +120,9 @@ void setup() {
   
   for (int i=0;i<5;i++) 
   {
-    ledcWrite(7,10);  // flash led
+    ledcWrite(4,10);  // flash led
     delay(200);
-    ledcWrite(7,0);
+    ledcWrite(4,0);
     delay(200);    
   }  
   
@@ -126,32 +131,42 @@ void setup() {
 void loop() {
   
   //recive data from client
-  xclient = xserver.accept();
-  xclient.onMessage(&callbackfunc);
-  
-  Serial.println("testing 2");
 
-  while (true){
-    static int oldtime = millis();
-    // send data to client
-    if(xclient.available()) {
+  xclient.onMessage(&callbackfunc);
+  Serial.println("testing 2");
+  
+  static int oldtime = millis();
+  // send data to client
+  while(true) {
+    if(xclient.available()){
       xclient.poll(); // required to recive messages
+    }else if (xserver.poll()){
+      Serial.print("thing");
+      xclient = xserver.accept();
+      xclient.onMessage(&callbackfunc);
     }
     
     int timechange = millis()-oldtime;
-    if(timechange > 10){
+    
+    
+    if(timechange >= deltaTime){
        
       MPULoop();
       
       oldtime = millis(); 
-      Serial.print("delta time ");
-      Serial.println(timechange);
+//      Serial.print("delta time ");
+//      Serial.println(timechange);
     }else if(timechange < 30){
       //videoLoop();
     }
+
+    
+    
     frameCount += 1;
     
     
     delay(1);
   }
+  
+  delay(1000);
 }

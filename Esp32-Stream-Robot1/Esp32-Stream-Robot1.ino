@@ -30,8 +30,8 @@ using namespace std;
 using namespace websockets;
 
 
-const char* ssid = "temptest"; //Enter SSID
-const char* password = "12345678"; //Enter Password
+const char* ssid = "_theCoderSchoolSanRamon"; //Enter SSID
+const char* password = "bigbus388"; //Enter Password
 
 WebsocketsServer xserver;
 WebsocketsClient xclient;
