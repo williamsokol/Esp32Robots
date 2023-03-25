@@ -1,5 +1,5 @@
 /*
-  Minimal Esp32 Websockets Server
+  Esp32 Websockets Server
 
   This sketch:
         1. Connects to a WiFi network
