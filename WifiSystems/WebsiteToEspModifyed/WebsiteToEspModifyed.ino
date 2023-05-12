@@ -24,11 +24,13 @@
 
 AsyncWebServer server(80);
 
-// REPLACE WITH YOUR NETWORK CREDENTIALS
-const char* ssid = "William";
+/* STA SSID & Password */
+char* ssid = "false id";
 const char* password = "12345678";
 
-//
+/* access point SSID & Password */
+const char* Lssid = "ESP32";  // Enter SSID here
+const char* Lpassword = "12345678";  //Enter Password here
 
 const char* PARAM_STRING = "inputString";
 const char* PARAM_INT = "inputInt";
@@ -65,24 +67,26 @@ void notFound(AsyncWebServerRequest *request) {
 }
 
 String readFile(fs::FS &fs, const char * path){
-  Serial.printf("Reading file: %s\r\n", path);
+  //Serial.printf("Reading file: %s\r\n", path);
   File file = fs.open(path, "r");
   if(!file || file.isDirectory()){
-    Serial.println("- empty file or failed to open file");
+    //Serial.println("- empty file or failed to open file");
     return String();
   }
-  Serial.println("- read from file:");
+  //Serial.println("- read from file:");
   String fileContent;
   while(file.available()){
     fileContent+=String((char)file.read());
   }
   file.close();
-  Serial.println(fileContent);
+  //Serial.println(fileContent);
   return fileContent;
 }
 
 void writeFile(fs::FS &fs, const char * path, const char * message){
   Serial.printf("Writing file: %s\r\n", path);
+  	
+  SPIFFS.remove(path);
   File file = fs.open(path, "w");
   if(!file){
     Serial.println("- failed to open file for writing");
@@ -126,17 +130,31 @@ void setup() {
     }
   #endif
 
-  ssid = readFile(SPIFFS, "/inputString.txt");
-
+  //ssid = "William";// readFile(SPIFFS, "/inputString.txt").c_str();
+  ssid = strdup( readFile(SPIFFS, "/inputString.txt").c_str());
+  // Serial.print(ssid[strlen(ssid)-1]);
+  // Serial.print(" , ");
+  // Serial.println((readFile(SPIFFS, "/inputString.txt").c_str())[7-1] );
+ 
+  //Serial.println(readFile(SPIFFS, "/inputString.txt").c_str());
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   if (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("WiFi Failed!");
-    return;
+    Serial.println("WiFi Failed! Creating Access Point");
+
+    IPAddress local_ip(192,168,1,1);
+    IPAddress gateway(192,168,1,1);
+    IPAddress subnet(255,255,255,0);
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP(Lssid, Lpassword);
+    WiFi.softAPConfig(local_ip, gateway, subnet);
+    //server.on("/", index_html);
+    //server.begin();
+    //return;
+  }else{
+    Serial.println("Wifi Works!");
   }
-  Serial.println();
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
+  
 
   // Send web page with input fields to client
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -169,6 +187,10 @@ void setup() {
   });
   server.onNotFound(notFound);
   server.begin();
+
+  Serial.println();
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
 }
 
 void loop() {
