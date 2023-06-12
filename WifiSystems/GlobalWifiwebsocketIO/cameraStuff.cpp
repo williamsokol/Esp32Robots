@@ -1,5 +1,5 @@
-#include "esp_camera.h"
-//#include <WiFi.h>
+#include "cameraStuff.h"
+
 
 // Select camera model
 //#define CAMERA_MODEL_WROVER_KIT

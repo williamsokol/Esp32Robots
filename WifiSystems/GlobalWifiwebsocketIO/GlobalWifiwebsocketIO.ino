@@ -25,6 +25,10 @@
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
 
+//My created project files:
+#include "cameraStuff.h"
+#include "motorStuff.h"
+
 
 using namespace std;
 using namespace websockets;
@@ -33,8 +37,8 @@ using namespace websockets;
 const char* ssid = "William"; //Enter SSID
 const char* password = "12345678"; //Enter Password
 
-WebsocketsServer xserver;
-WebsocketsClient xclient;
+// WebsocketsServer xserver;
+// WebsocketsClient xclient;
 
 
 int frameCount = 0;
@@ -65,7 +69,7 @@ void setup() {
   Serial.begin(115200);
 
 
-
+  
   //set up led
 //  ledcSetup(7, 5000, 8);
 //  ledcAttachPin(4, 7);  //pin4 is LED
@@ -123,11 +127,9 @@ void loop() {
   // send data to client
   while(xclient.available()) {
     xclient.poll();
-    if(frameCount%10 == 0){
-      MPULoop();
-    }else{
-      videoLoop();  
-    }
+    
+    videoLoop();  
+    
 
     frameCount += 1;
     //Serial.println("test ");

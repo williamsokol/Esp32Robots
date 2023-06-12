@@ -1,3 +1,5 @@
+#include "motorStuff.h"
+
 const int MotPin0 = 14;  
 const int MotPin1 = 12;  
 const int MotPin2 = 2;  
