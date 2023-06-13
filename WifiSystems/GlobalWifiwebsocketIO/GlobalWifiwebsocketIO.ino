@@ -29,19 +29,16 @@
 #include "cameraStuff.h"
 #include "motorStuff.h"
 
-
-using namespace std;
-using namespace websockets;
-
-
+//local internet login
 const char* ssid = "William"; //Enter SSID
 const char* password = "12345678"; //Enter Password
-
-// WebsocketsServer xserver;
-// WebsocketsClient xclient;
-
+//server ip & port
+const char* websocket_server_host = "34.125.16.23";
+const uint16_t websocket_server_port = 65080;
 
 int frameCount = 0;
+
+WebsocketsClient xclient;
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
@@ -68,9 +65,7 @@ void setup() {
   
   Serial.begin(115200);
 
-
-  
-  //set up led
+//  set up led
 //  ledcSetup(7, 5000, 8);
 //  ledcAttachPin(4, 7);  //pin4 is LED
 
@@ -80,9 +75,6 @@ void setup() {
   //set up camera
   initCamera();
 
-  //set up mpu6050
-  //initMPU();
-  
   // Connect to wifi
   WiFi.begin(ssid, password);
 
@@ -94,12 +86,17 @@ void setup() {
   
   Serial.println("");
   Serial.println("WiFi connected");
-  Serial.println("IP address: ");
+  Serial.println("Local IP address: ");
   Serial.println(WiFi.localIP());   //You can get IP address assigned to ESP
 
-  xserver.listen(80);
-  Serial.print("Is server live? ");
-  Serial.println(xserver.available());
+  //xserver.listen(80);
+  //Serial.print("Is server live? ");
+  //Serial.println(xserver.available());
+  while(!xclient.connect(websocket_server_host, websocket_server_port, "/")){
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Websocket Connected!");
 
   Serial.println(HIGH);
   pinMode(4, OUTPUT);
@@ -107,34 +104,36 @@ void setup() {
   
   for (int i=0;i<5;i++) 
   {
-    ledcWrite(7,10);  // flash led
+    ledcWrite(4,10);  // flash led
     delay(200);
-    ledcWrite(7,0);
+    ledcWrite(4,0);
     delay(200);    
   }  
   
 }   
 
 void loop() {
+  Serial.println((uintptr_t)&xclient, HEX);
+  videoLoop();
   
   //recive data from client
-  xclient = xserver.accept();
-  xclient.onMessage(&callbackfunc);
+  // xclient = xserver.accept();
+  // xclient.onMessage(&callbackfunc);
+  // xclient.poll();
   
-  Serial.println("testing 2");
 
+  // 
  
-  // send data to client
-  while(xclient.available()) {
-    xclient.poll();
+  // // send data to client
+  // while(!xclient.available()) {
     
-    videoLoop();  
     
 
-    frameCount += 1;
-    //Serial.println("test ");
-    delay(20);
-  }
+  //   frameCount += 1;
+  //   //Serial.println("test ");
+  //   delay(20);
+  // }
   
-  delay(1000);
+  // delay(20);
 }
+

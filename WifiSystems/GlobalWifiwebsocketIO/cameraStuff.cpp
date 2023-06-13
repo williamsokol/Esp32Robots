@@ -54,7 +54,10 @@ void initCamera(){
 
 void videoLoop()
 {
-   camera_fb_t *fb = esp_camera_fb_get();
+  camera_fb_t *fb = esp_camera_fb_get();
+  Serial.print((uintptr_t)&xclient, HEX);
+  Serial.println(" Sending data Locally");
+
   if(!fb){
     Serial.println("Camera capture failed");
     esp_camera_fb_return(fb);
@@ -65,7 +68,7 @@ void videoLoop()
     Serial.println("Non-JPEG data not implemented");
     return;
   }
-  //Serial.println(fb->len);
+
   xclient.sendBinary((const char*) fb->buf, fb->len);
   esp_camera_fb_return(fb);
 }

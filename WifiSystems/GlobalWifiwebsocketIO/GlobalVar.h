@@ -12,7 +12,8 @@ using namespace websockets;
 
 // public:
 static WebsocketsServer xserver;
-static WebsocketsClient xclient;
+extern WebsocketsClient xclient;
+
 
 // };
 
