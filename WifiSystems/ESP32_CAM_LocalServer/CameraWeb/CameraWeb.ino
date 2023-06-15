@@ -18,8 +18,8 @@
 
 const char* ssid = "William";
 const char* password = "12345678";
-const char* websocket_server_host = "192.168.95.37";
-const uint16_t websocket_server_port = 8888;
+const char* websocket_server_host = "34.125.16.23";
+const uint16_t websocket_server_port = 65080;
 
 using namespace websockets;
 WebsocketsClient client;

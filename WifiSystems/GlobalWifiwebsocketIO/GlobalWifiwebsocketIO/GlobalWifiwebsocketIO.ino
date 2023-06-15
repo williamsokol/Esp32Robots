@@ -33,8 +33,8 @@
 const char* ssid = "William"; //Enter SSID
 const char* password = "12345678"; //Enter Password
 //server ip & port
-const char* websocket_server_host = "192.168.58.37";//"34.125.16.23";
-const uint16_t websocket_server_port = 8888;//65080;
+const char* websocket_server_host = "34.125.16.23";
+const uint16_t websocket_server_port = 65080;
 
 int frameCount = 0;
 
@@ -54,7 +54,7 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 
       float xf = (float)x/(float)100;
       
-      float yf = (float)y/(float)100;;
+      float yf = (float)y/(float)100;
       
       controllMotors(xf,yf);
     }
@@ -75,7 +75,7 @@ void setup() {
 
 //  set up led
  ledcSetup(7, 5000, 8); // set channl 7 
- ledcAttachPin(4, 7);  //pin4 is LED
+ ledcAttachPin(4, 7);  //pin4 is LED to channel 7
 
   //set up motors
   initMotors();
