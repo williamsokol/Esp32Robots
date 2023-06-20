@@ -13,7 +13,8 @@ const wsServer = new WebSocket.Server({port: WS_PORT}, ()=> console.log(`WS Serv
 let connectedClients = [];
 const robots = []
 async function start() {
-    
+    let test = [1,2,3,4,5,6]
+    test.splice(2,1)
     // console.log(await crud.readlist());
 }start()
 
@@ -51,9 +52,11 @@ async function handleRobotConnection(ws,req)
 {
     let lastActivityTime = Date.now();
     const timeoutDuration = 60000;
-    
+
     ws.id = await crud.smallestUnusedID()
     console.log(ws.id);
+    ws.subbedClients = [];
+    
     robots.push(ws);   
     crud.AddRobot("test","pass", ws.id);
     console.log("adding robot to database")
@@ -61,11 +64,15 @@ async function handleRobotConnection(ws,req)
     ws.on('message', data => {
         lastActivityTime = Date.now();
 
-        connectedClients.forEach((ws,i)=>{
-            if(ws.readyState === ws.OPEN){
-                ws.send(data);
+        ws.subbedClients.forEach((wsc,i)=>{
+        // for (let i=0;i<ws.subbedClients.length;i++){
+            // let wsc = ws.subbedClients[i]; 
+            if(wsc.readyState === wsc.OPEN){
+                wsc.send(data);
             }else{
-                connectedClients.splice(i ,1);
+                ws.subbedClients.splice(i ,1);
+                // break;
+                
             }
         })
     })
@@ -78,7 +85,7 @@ async function handleRobotConnection(ws,req)
 
     let timeout = setInterval(() => {
         const elapsedTime = Date.now() - lastActivityTime;
-        console.log("test connections ");
+        // console.log("test connections ");
         if (elapsedTime >= timeoutDuration) {
           ws.terminate(); // Close the WebSocket connection
           clearInterval(timeout);
@@ -93,7 +100,14 @@ async function handleWebConnection(ws,req)
     console.log('Query parameters:', queryParams);
 
     let robot = robots.find(r => r.id == queryParams['id']);
-    //console.log(robots[0].id)
+    if(robot == null){
+        console.error("could not find selected robot")
+        ws.terminate();
+        return;
+    }
+    robot.subbedClients.push(ws)
+
+    // console.log(robot)
     ws.on('message', data => {
         if (robot != null){
             console.log("sending to robot");

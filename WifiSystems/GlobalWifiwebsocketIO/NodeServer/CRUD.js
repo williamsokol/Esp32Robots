@@ -60,9 +60,9 @@ async function smallestUnusedID()
     for(let i=0;i<base.length;i++){
         IDs.push(base[i]['ID'])
     }
-    console.log(IDs);
+    // console.log(IDs);
     IDs.sort((a, b) => a - b)
-    console.log(IDs);
+    // console.log(IDs);
     for(let i=0;i<IDs.length;i++){
         if(i != IDs[i]){
             return i;
