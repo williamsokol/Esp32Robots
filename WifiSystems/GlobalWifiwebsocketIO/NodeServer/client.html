@@ -6,8 +6,18 @@
         <img src="">
         <input type="submit" id="lightBtn" value="Light" />
         <script>
+            const params = new URLSearchParams(window.location.search);
+            const robotID = params.get('id'); // Retrieves the value of the 'name' parameter (John)
+         
+
             const img = document.querySelector('img');
-            const WS_URL = 'ws:///192.168.58.37:8888';
+            const headers = {
+                'type': 'Website',
+                'id': robotID
+            };
+            const searchParams = new URLSearchParams(headers);
+            const queryString = searchParams.toString();
+            const WS_URL = 'ws:///10.0.0.53:8888?'+queryString;
             const ws = new WebSocket(WS_URL);
             let urlObject;
 
