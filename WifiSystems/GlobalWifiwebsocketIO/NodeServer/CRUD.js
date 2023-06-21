@@ -8,9 +8,11 @@ async function AddRobot(name= 'a',password="b",id = null){
   if (id == null){
     id = await smallestUnusedID();
   }
-
+  let date = new Date()
+  let options = { hour: 'numeric', minute: 'numeric', hour12: true };
+  let time = date.toLocaleTimeString('en-US', options);
   const tableName = 'ConnectedRobots';
-  const data = [{ robot_name: 'value1', password: 'value2' , ID: id}];
+  const data = [{ robot_name: 'value1', password: 'value2' , ID: id, time_created: time}];
   
   const { data: insertedData, error } = await supabase.from(tableName).insert(data);
   if (error) {
