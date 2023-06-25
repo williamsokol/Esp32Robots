@@ -29,12 +29,14 @@
 #include "cameraStuff.h"
 #include "motorStuff.h"
 
+//Robot name
+const char* RobotName = "Ballyb";
 //local internet login
-const char* ssid = "William"; //Enter SSID
-const char* password = "12345678"; //Enter Password
+const char* ssid = "falcon1234"; //Enter SSID
+const char* password = "Tablelamp!"; //Enter Password
 //server ip & port
-const char* websocket_server_host = "34.125.16.23";
-const uint16_t websocket_server_port = 65080;
+const char* websocket_server_host = "10.0.0.53";
+const uint16_t websocket_server_port = 8888;
 
 int frameCount = 0;
 
@@ -73,9 +75,9 @@ void setup() {
   
   Serial.begin(115200);
 
-//  set up led
- ledcSetup(7, 5000, 8); // set channl 7 
- ledcAttachPin(4, 7);  //pin4 is LED to channel 7
+  // set up led
+  ledcSetup(7, 5000, 8); // set channl 7 
+  ledcAttachPin(4, 7);  //pin4 is LED to channel 7
 
   //set up motors
   initMotors();
@@ -83,9 +85,10 @@ void setup() {
   //set up camera
   initCamera();
 
+
   // Connect to wifi
   WiFi.begin(ssid, password);
-
+ 
   // Wait some time to connect to wifi
   for(int i = 0; i < 15 && WiFi.status() != WL_CONNECTED; i++) {
       Serial.print(".");
@@ -106,12 +109,9 @@ void setup() {
     Serial.print(".");
   }
   Serial.println("Websocket Connected!");
-
-  Serial.println(HIGH);
-  
   
   pinMode(4, OUTPUT);
-  for (int i=0;i<5;i++) 
+  for (int i=0;i<3;i++) 
   {
     // Serial.println("Test");
     ledcWrite(7,5);  // flash led

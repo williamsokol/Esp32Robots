@@ -63,11 +63,11 @@ async function handleRobotConnection(ws,req)
 
     ws.on('message', data => {
         lastActivityTime = Date.now();
-
         ws.subbedClients.forEach((wsc,i)=>{
-        // for (let i=0;i<ws.subbedClients.length;i++){
-            // let wsc = ws.subbedClients[i]; 
+            // for (let i=0;i<ws.subbedClients.length;i++){
+                // let wsc = ws.subbedClients[i]; 
             if(wsc.readyState === wsc.OPEN){
+                // console.log(data);
                 wsc.send(data);
             }else{
                 ws.subbedClients.splice(i ,1);
@@ -80,7 +80,7 @@ async function handleRobotConnection(ws,req)
     ws.on('close', data => {
         console.log("robot websocket closed");
         if(req.headers['type'] == "robot")
-            crud.deleteRow(req.headers['id']);
+            crud.deleteRow(ws.id);
     })
 
     let timeout = setInterval(() => {

@@ -17,7 +17,7 @@
             };
             const searchParams = new URLSearchParams(headers);
             const queryString = searchParams.toString();
-            const WS_URL = 'ws:///10.0.0.53:8888?'+queryString;
+            const WS_URL = 'ws:///10.0.0.36:8888?'+queryString; // IMPORTANT ip must be updated for every new server ip
             const ws = new WebSocket(WS_URL);
             let urlObject;
 
@@ -30,6 +30,7 @@
 
             ws.onopen = () => console.log(`Connected to ${WS_URL}`);
             ws.onmessage = message => {
+                // console.log(message.data)
                 const arrayBuffer = message.data;
                 if(urlObject){
                     URL.revokeObjectURL(urlObject);

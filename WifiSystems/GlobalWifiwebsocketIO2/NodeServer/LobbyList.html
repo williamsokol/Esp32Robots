@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <title>Lobby List</title>
+        <style>
+            table {
+              font-family: arial, sans-serif;
+              border-collapse: collapse;
+              width: 100%;
+            }
+            
+            td, th {
+              border: 1px solid #dddddd;
+              text-align: left;
+              padding: 8px;
+            }
+            
+            tr:nth-child(even) {
+              background-color: #dddddd;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>This is the Robot Lobby</h1>
+        <img src="">
+
+        <table id="tab">
+        <tr>
+            <th>Name</th>
+            <th>Password</th>
+            <th>ID</th>
+            <th>Created At:</th>
+            <th>link</th>
+        </tr>
+       
+        </table>
+
+        <script>
+            
+            const supabaseUrl = 'https://croqanlnwwpwfrajjgos.supabase.co/rest/v1';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyb3Fhbmxud3dwd2ZyYWpqZ29zIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU4MjQ1MjQsImV4cCI6MjAwMTQwMDUyNH0.yKni6eV7n4gKqjtC5uQgTLhCusLW3SymCWgub954upc';
+            const apiUrl = supabaseUrl;
+            const apiKey = supabaseKey;
+
+            // Make a GET request to retrieve data from a table
+            var table = document.getElementById('tab');
+           
+            console.log(table);
+            async function start(){
+
+                var robotList = await readList();
+
+                for(var i=0; i<robotList.length;i++){
+                    var tr = document.createElement('tr');
+                    table.appendChild(tr)
+                    
+                    Object.keys(robotList[i]).forEach(element => {
+                        var td = document.createElement('td');
+                        td.innerHTML = robotList[i][element];
+                        tr.appendChild( td);
+                    });
+                    var td = document.createElement('td');
+                    let robotID = robotList[i]['ID']
+                    td.innerHTML = `<a href="./client?id=${robotID}">Join</a>`;
+                    tr.appendChild( td);
+                }
+                
+            }
+            start();
+
+
+            // Events
+           
+
+            async function readList()
+            {
+                var a = await fetch(`${apiUrl}/ConnectedRobots`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    apiKey: `${apiKey}`
+
+                },
+                })
+                var b = await a.json()
+                .catch(error => {
+                    // Handle any errors
+                    console.error(error);
+                });
+                return b;
+            } 
+         
+        </script>
+    </body>
+</html>
