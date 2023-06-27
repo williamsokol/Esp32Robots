@@ -5,6 +5,8 @@ const WebSocket = require('ws');
 const url = require('url');
 const app = express();
 
+app.use(express.static('Pages'));
+
 const WS_PORT  = 8888;
 const HTTP_PORT = 8000;
 

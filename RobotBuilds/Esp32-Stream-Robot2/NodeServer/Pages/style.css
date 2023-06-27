@@ -1,0 +1,60 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+body {
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: .3fr 1fr .3fr;
+  grid-template-rows: 1fr 50%;
+
+}
+
+@media (orientation: portrait) {
+  body {
+    grid-template-columns: 1fr;
+  }
+}
+
+#stream {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#controls {
+  display: grid;
+  grid-template-rows: 40px 1fr;
+  grid-template-columns: minmax(1fr, mincontent) min-content;
+  padding: 5px;
+  /* margin: auto; */
+}
+
+#joyDiv {
+
+  border-radius: 25%;
+  background-color: #e0e0e0;
+}
+
+.toggle-buttons {
+  display: inline-block;
+  justify-content: center;
+  margin: 5px;
+}
+
+.toggle-button {
+  background-color: #e8e8e8;
+  border: none;
+  padding: 5px;
+
+  cursor: pointer;
+}
+
+.toggle-button.active {
+  background-color: #555555;
+  color: #ffffff;
+}
