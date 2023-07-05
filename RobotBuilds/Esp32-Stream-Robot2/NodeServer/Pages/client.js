@@ -67,8 +67,10 @@ function readInputData()
 
   if(KEYS_PRESSED['ArrowLeft'] || KEYS_PRESSED['a']){
     result.x = -100
+    result.y = 100
   }else if(KEYS_PRESSED['ArrowRight']|| KEYS_PRESSED['d']){
     result.x = 100
+    result.y = 100
   }
   if(KEYS_PRESSED['ArrowUp']|| KEYS_PRESSED['w']){
     result.y = 100

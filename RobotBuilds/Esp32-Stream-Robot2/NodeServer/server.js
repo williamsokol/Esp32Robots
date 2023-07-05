@@ -112,7 +112,7 @@ async function handleWebConnection(ws,req)
     // console.log(robot)
     ws.on('message', data => {
         if (robot != null){
-            console.log("sending to robot");
+            // console.log("sending to robot");
             robot.send(data);
         }
     })

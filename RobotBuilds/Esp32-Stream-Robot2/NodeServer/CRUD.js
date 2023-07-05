@@ -54,6 +54,23 @@ async function deleteRow(id) {
     console.error('Error deleting row:', error.message);
   }
 }
+async function ClearTable() {
+  try {
+    const { data, error } = await supabase
+      .from('ConnectedRobots')
+      .delete()
+      //.match({ ID : id }); // Specify the condition to match the row you want to delete
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    console.log('Row deleted successfully:', data);
+  } catch (error) {
+    console.error('Error deleting row:', error.message);
+  }
+}
 
 async function smallestUnusedID()
 {
