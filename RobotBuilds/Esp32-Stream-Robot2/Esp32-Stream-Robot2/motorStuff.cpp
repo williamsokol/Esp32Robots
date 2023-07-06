@@ -25,23 +25,26 @@ void controllMotors(float x, float y)
 {
   // y is power in the forward/backwards
   // x is how much of the power should go in each wheel
+  int l;
+  int r;
   int m;
-  float lr;
-
+  float normX;
+  float normY;
+  float adjustX;
+  float adjustY;
+  float sum;
   
 
-  m = abs(y) * 255;
-  lr = (x+1)/2;
+  sum = x+y;
+  normX = x/sum;
+  normY = y/sum;
+  adjustX = x*255;
+  adjustY = y*255;
 
-  lr = constrain(lr, 0,1);
-//  constrain(m, 0,255);
-
-  int l = (m*1.5)*(1-(lr));
-  int r = (m*1.5)*(lr);
-
-  l = constrain(l, 0,255);
-  r = constrain(r, 0,255);
-
+  l = (adjustY + constrain(adjustX,-255,0 ));
+  r = (adjustY - constrain(adjustX,0,255 ));
+  m = abs(adjustY);
+// Serial.print("adjusted left and right Values: ");
 //  Serial.print(x);
 //  Serial.print(" ");
 //  Serial.print(y);

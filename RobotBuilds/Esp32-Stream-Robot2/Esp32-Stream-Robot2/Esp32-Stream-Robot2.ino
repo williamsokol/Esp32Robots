@@ -79,7 +79,7 @@ void setup() {
   
   Serial.begin(115200);
 
-  // set up led
+  // set up led DO NOT SET PIN TO OUT AFTER USING LEDC
   ledcSetup(7, 5000, 8); // set channl 7 
   ledcAttachPin(4, 7);  //pin4 is LED to channel 7
 
