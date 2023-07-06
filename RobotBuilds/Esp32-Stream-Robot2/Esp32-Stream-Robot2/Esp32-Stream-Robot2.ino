@@ -123,7 +123,7 @@ void setup() {
   }
   Serial.println("Websocket Connected!");
   
-  pinMode(4, OUTPUT);
+  
   for (int i=0;i<3;i++) 
   {
     // Serial.println("Test");
