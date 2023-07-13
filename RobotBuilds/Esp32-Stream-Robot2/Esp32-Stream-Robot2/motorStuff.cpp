@@ -1,8 +1,8 @@
 #include "motorStuff.h"
 
 const int MotPin0 = 14;  
-const int MotPin1 = 12;  
-const int MotPin2 = 2;  
+const int MotPin1 = 2;  
+const int MotPin2 = 12;  
 //const int MotPin3 = 2;  
 
 void initMotors() 
@@ -15,7 +15,7 @@ void initMotors()
   ledcSetup(4, 2000, 8); // 2000 hz PWM, 8-bit resolution
   ledcSetup(5, 2000, 8); // 2000 hz PWM, 8-bit resolution
   //ledcSetup(6, 2000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcAttachPin(MotPin0, 6); //left 
+  ledcAttachPin(MotPin0, 6); //Both(backwards pin)
   ledcAttachPin(MotPin1, 4); //left
   ledcAttachPin(MotPin2, 5); //right
   //ledcAttachPin(MotPin3, 6); //right
