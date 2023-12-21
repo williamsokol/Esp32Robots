@@ -1,4 +1,7 @@
 
+const WS_IP = '10.0.0.153'
+const WS_PORT = '65080'
+
 const params = new URLSearchParams(window.location.search);
 const robotID = params.get('id'); // Retrieves the value of the 'name' parameter (John)
 let wsinterval;
@@ -10,7 +13,7 @@ const headers = {
 };
 const searchParams = new URLSearchParams(headers);
 const queryString = searchParams.toString();
-const WS_URL = 'ws:///10.0.0.36:8888?'+queryString;
+const WS_URL = `ws:///${WS_IP}:${WS_PORT}?${queryString}`;
 const ws = new WebSocket(WS_URL);
 let urlObject;
 

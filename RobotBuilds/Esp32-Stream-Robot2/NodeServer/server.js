@@ -3,12 +3,16 @@ const path = require('path');
 const express = require('express');
 const WebSocket = require('ws');
 const url = require('url');
+const dotenv = require('dotenv');
+const fs = require('fs');
+const IP = require('ip');
 const app = express();
+dotenv.config();
 
 app.use(express.static('Pages'));
 
-const WS_PORT  = 8888;
-const HTTP_PORT = 8000;
+const WS_PORT  = 65080;
+const HTTP_PORT = 80;
 
 const wsServer = new WebSocket.Server({port: WS_PORT}, ()=> console.log(`WS Server is listening at ${WS_PORT}`));
 
@@ -17,7 +21,8 @@ const robots = []
 async function start() {
     let test = [1,2,3,4,5,6]
     test.splice(2,1)
-    // console.log(await crud.readlist());
+    // const serverIP = req.socket.localAddress;
+    // console.log(app);
 }start()
 
 wsServer.on('connection', async (ws, req)=>{
@@ -44,9 +49,29 @@ wsServer.on('connection', async (ws, req)=>{
    
 });
 
-app.get('/client',(req,res)=>res.sendFile(path.resolve(__dirname, './client.html')));
+app.get('/',(req,res)=>res.sendFile(path.resolve(__dirname, './index.html')));
 app.get('/LobbyList',(req,res)=>res.sendFile(path.resolve(__dirname, './LobbyList.html')));
-app.listen(HTTP_PORT, ()=> console.log(`HTTP server listening at ${HTTP_PORT}`));
+app.get('/client',(req,res)=> {
+    const filePath = './Pages/client.js';
+    fs.readFile(filePath, 'utf8', (err, fileContent) => {
+        if (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+        } else {
+        // Set the appropriate content type
+        res.setHeader('Content-Type', 'application/javascript');
+        // Send the JavaScript file content as a response
+        console.log(fileContent);
+        res.send("fileContent");
+        }
+    });
+// res.sendFile(path.resolve(__dirname, './Pages/controls.html'))
+});
+app.listen(HTTP_PORT, ()=> {
+    
+    console.log(`HTTP server listening at ${HTTP_PORT}`)
+    console.log(`ip of server is ${IP.address()}`)
+});
 
 
 

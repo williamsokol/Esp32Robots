@@ -39,7 +39,7 @@ const char* RobotName = "Ballyb";
 // String password = "Tablelamp!"; //Enter Password
 
 //server ip & port
-const char* websocket_server_host = "34.125.16.23";
+const char* websocket_server_host = "193.109.120.197";
 const uint16_t websocket_server_port = 65080;
 
 int frameCount = 0;
@@ -116,6 +116,8 @@ void setup() {
   //xserver.listen(80);
   //Serial.print("Is server live? ");
   //Serial.println(xserver.available());
+  Serial.print("Connecting to server: ");
+  Serial.println(websocket_server_host);
   xclient.addHeader("type", "robot");
   while(!xclient.connect(websocket_server_host, websocket_server_port, "/")){
     delay(500);

@@ -32,4 +32,7 @@ Computer             |  Phone
 
 ## Referencing
 These are sources that helped create this code base:
+
 https://www.youtube.com/watch?v=CpIkG9N5-JM
+
+https://www.youtube.com/watch?v=QdHvS0D1zAI
