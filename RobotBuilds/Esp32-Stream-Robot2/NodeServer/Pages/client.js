@@ -1,5 +1,5 @@
 
-const WS_IP = '10.0.0.153'
+const WS_IP = '10.0.0.78'
 const WS_PORT = '65080'
 
 const params = new URLSearchParams(window.location.search);

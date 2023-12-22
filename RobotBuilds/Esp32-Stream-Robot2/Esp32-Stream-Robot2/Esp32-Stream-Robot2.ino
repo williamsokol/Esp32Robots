@@ -39,7 +39,7 @@ const char* RobotName = "Ballyb";
 // String password = "Tablelamp!"; //Enter Password
 
 //server ip & port
-const char* websocket_server_host = "193.109.120.197";
+const char* websocket_server_host = "34.42.135.118";
 const uint16_t websocket_server_port = 65080;
 
 int frameCount = 0;
@@ -75,6 +75,7 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 
 
 void setup() {
+  WiFi.setSleep(false);
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // prevent brownouts by silencing them
   
   Serial.begin(115200);
@@ -138,7 +139,18 @@ void setup() {
 }   
 
 void loop() {
-  // Serial.println((uintptr_t)&xclient, HEX);
+  static int frames = 0;
+  frames += 1;
+  if(frames%100 == 0){
+    static int oldMillis = 0;
+    int time = millis();
+    Serial.print("on frame: ");
+    Serial.print(frames);
+    Serial.print(" at time: ");
+    Serial.println((time-oldMillis)/100 );
+    oldMillis = time;
+  }
+
   videoLoop();
 
   xclient.onMessage(&callbackfunc);
