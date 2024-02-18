@@ -39,3 +39,5 @@ https://www.youtube.com/watch?v=QdHvS0D1zAI
 
 https://randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/
 
+https://randomnerdtutorials.com/esp32-web-server-spiffs-spi-flash-file-system/
+
