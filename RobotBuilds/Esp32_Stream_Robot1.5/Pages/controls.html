@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Client</title>
+  <link rel="stylesheet" type="text/css" rel="noopener" target="_blank" href="style.css">
+  <link rel="stylesheet" type="text/css" rel="noopener" target="_blank" href="arrowKeys.css">
+  <script src="joy.js"></script>
+  <link href="fontawesome-free-5.15.4-web/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <img id="stream" style="grid-column: 2 / 3;" src="PlaceHolder.png">
+  <div id="controls" style="grid-row: 2/3 ;grid-column: 2/3;">
+    <div class="toggle-buttons">
+      <button id="arrowKeysButton" class="toggle-button active">Arrow Keys</button>
+      <button id="joystickButton" class="toggle-button">Joystick</button>
+    </div>
+    <input type="submit" id="lightBtn" value="Light" />
+    <div id="joyDiv" style="grid-column:1/3 ;"></div>
+
+    <div id="keysDiv" class="keys" style="grid-column:1/3 ;">
+      <div class="up arr"><i class="fa fa-arrow-up"></i></div>
+      <br />
+      <div class="left arr"><i class="fa fa-arrow-left"></i></div>
+      <div class="down arr"><i class="fa fa-arrow-down"></i></div>
+      <div class="right arr"><i class="fa fa-arrow-right"></i></div>
+    </div>
+  </div>
+  <!-- this is the visual code to work around css -->
+  <script type="text/javascript">
+    var joy;
+    var controlType = "keys";
+    document.addEventListener('DOMContentLoaded', function () {
+      keyDiv.style.fontSize = `${keyDiv.offsetWidth/10}px`;
+      keyDiv.style.display = "none"
+      console.log(joyDiv.style.display)
+      joyDiv.style.width = `${joyDiv.offsetHeight}px`
+      joy = new JoyStick('joyDiv');
+      joyDiv.style.margin = "auto";
+      joyDiv.style.display = "none"
+      keyDiv.style.display = "";
+    });
+
+    // Create JoyStick object into the DIV 'joyDiv'
+    var controls = document.getElementById('controls')
+    var joyDiv = document.getElementById('joyDiv')
+    var keyDiv = document.getElementById('keysDiv')
+
+    const arrowKeysButton = document.getElementById('arrowKeysButton');
+    const joystickButton = document.getElementById('joystickButton');
+    const arrowKeys = document.getElementById('arrowKeys');
+    const joystick = document.getElementById('joystick');
+
+    arrowKeysButton.addEventListener('click', function () {
+      controlType = "keys";
+      arrowKeysButton.classList.add('active');
+      joystickButton.classList.remove('active');
+      joyDiv.style.display = "none"
+      keyDiv.style.display = ""
+
+    });
+
+    joystickButton.addEventListener('click', function () {
+      controlType = "joystick";
+      arrowKeysButton.classList.remove('active');
+      joystickButton.classList.add('active');
+      joyDiv.style.display = ""
+      keyDiv.style.display = "none"
+    });
+  </script>
+  <script src="client.js"></script>
+  <script src="arrowKeys.js"></script>
+</body>
+
+</html>

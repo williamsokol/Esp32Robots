@@ -21,6 +21,7 @@
 #include <DNSServer.h>
 #include <ArduinoWebsockets.h>
 #include <WiFi.h>
+#include "SPIFFS.h"
 
 //these 2 libs down are to stop brownout on esp32
 #include "soc/soc.h"
@@ -64,25 +65,33 @@ const char index_html[] PROGMEM = R"rawliteral(
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
+    char buff[20];
+    msg.data().toCharArray(buff, 20);
+    Serial.print("callback ");
+    Serial.println(buff);
+
+    
     int x,y;
-    char buff[10];
-    msg.data().toCharArray(buff, 10);
-//    Serial.print("callback ");
-    //Serial.println(buff);
-
     if (sscanf(buff, "%d,%d", &x, &y) == 2) {
-        //Serial.println(x);
+      //Serial.println(x);
 
-        float xf = (float)x/(float)100;
-        
-        float yf = (float)y/(float)100;;
-        
-        controllMotors(xf,yf);
+      float xf = (float)x/(float)100;
+      
+      float yf = (float)y/(float)100;
+      
+      controllMotors(xf,yf);
+    }
+    else {
+      Serial.println(buff);
+      //flip light
+      static bool lightOn = false;
+      lightOn = !lightOn;
+      ledcWrite(7,lightOn? 5:0); 
     }
 }
 void setupServer() {
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
-    // request->send_P(200, "text/html", index_html);
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/controls.html");
     Serial.println("Client Connected");
     client_connected = true;
 
@@ -110,6 +119,8 @@ void setupServer() {
     }
     request->send(200, "text/html", "The values entered by you have been successfully sent to the device. It will now attempt WiFi connection");
   });
+  
+  server.serveStatic("/", SPIFFS, "/").setDefaultFile("controls.html");
 }
 class CaptiveRequestHandler : public AsyncWebHandler {
   public:
@@ -120,9 +131,9 @@ class CaptiveRequestHandler : public AsyncWebHandler {
       //request->addInterestingHeader("ANY");
       return true;
     }
-
+    
     void handleRequest(AsyncWebServerRequest *request) {
-      request->send_P(200, "text/html", index_html);
+      request->send(SPIFFS, "/controls.html");
       Serial.println("Client Connected");
       client_connected = true;
 
@@ -151,7 +162,10 @@ void setup() {
   
   Serial.begin(115200);
 
-
+  if(!SPIFFS.begin(true)){
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
 
   //set up led
 //  ledcSetup(7, 5000, 8);
@@ -185,9 +199,10 @@ void setup() {
   Serial.print("Is server live? ");
   Serial.println(xserver.available());
 
-  // Serial.println(HIGH);
-  pinMode(4, OUTPUT);
-  
+  // set up led DO NOT SET PIN TO OUT AFTER USING LEDC
+  ledcSetup(7, 5000, 8); // set channl 7 
+  ledcAttachPin(4, 7);  //pin4 is LED to channel 7
+
   
   for (int i=0;i<5;i++) 
   {
