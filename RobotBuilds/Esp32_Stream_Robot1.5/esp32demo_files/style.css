@@ -1,7 +1,6 @@
 *{
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
 }
 
 html,
@@ -26,15 +25,6 @@ body {
   display: grid;
   grid-template-columns: .3fr 1fr .3fr;
   grid-template-rows: 1fr;
-
-  
-  background-image: radial-gradient(
-    farthest-corner at 50% 100%,
-    #e48349 -300%,
-    #000 80%
-  );
-  
-
 }
 .centerPanel{
   /* overflow: hidden; */
@@ -46,17 +36,14 @@ body {
   display: grid;
   /* grid-template-columns: .3fr 1fr .3fr; */
   grid-template-rows: min-content 1fr;
-
-  border-left: 1px #ffffff solid;
-  border-right: 1px #ffffff solid;
 }
 
 .controlPanel{
-  margin: 2% 10% 0% 10%;
+  margin: 2% 10% 3% 10%;
   padding: 2%;
   background-color: #1a1a1b;
   display: grid;
-  grid-template-rows: auto 80px;
+  /* grid-template-columns:; */
   
 }
 
@@ -73,12 +60,6 @@ body {
   }
   .centerPanel{
     grid-column: 1/2;
-  }
-  h1{
-    display: none;
-  }
-  #logotextsvg{
-    display: none;
   }
 }
 
@@ -105,31 +86,22 @@ body {
 }
 
 .toggle-buttons {
-  display: flex;
+  display: inline-block;
   justify-content: center;
-  height: 100%;
+  margin: 5px;
 }
 
 .toggle-button {
   background-color: #e8e8e8;
-  /* border: none; */
+  border: none;
   padding: 5px;
-  margin: 0px 2% 0px 2%;
-  height: 100%;
-  width: 40%;
-  font-size: 1.5vmin;
+
   cursor: pointer;
 }
 
 .toggle-button.active {
   background-color: #555555;
-  border-color: white;
   color: #ffffff;
-}
-
-#lightBtn{
-  height: 100%;
-  /* color: #f00; */
 }
 
 ul {
@@ -140,23 +112,18 @@ ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  /* background-color: #333; */
-  background: linear-gradient(135deg, #1a1a1b 50%, #000000);
-  border-bottom: medium solid white;;
+  background-color: #333;
   
-  display: grid;
-  grid-template-columns: auto 1fr 1fr auto;
+  display: flex;
   align-items: center;
 }
 
 li {
   float: left;
-  display: flex;
 }
 
 li a {
-  display: flex;
-  align-items: center;
+  display: block;
   color: white;
   text-align: center;
   padding: 0px 16px;
@@ -165,34 +132,4 @@ li a {
 
 li a:hover {
   background-color: #111;
-}
-
-h1{
-  position: fixed;
-  top: 0;
-  left: 50%;
-  text-align: center;
-  color: white;
-  transform: translate(-50%,0);
-  /* width: 100%; */
-}
-
-.buttons{
- display: grid;
- grid-row: auto;
- grid-template-columns: 2fr 1fr 1fr 1fr; 
- background-color: #000;
- /* border-radius: 5px; */
- margin: 10px 0 0px 0;
- padding: 5px;
-}
-
-.UI{
-  color: white;
-  /* background: #555555; */
-  margin: 0px 5px 0px 5px;
-  border: 1px solid white  ;
-  border-radius: 5px;
-  font-size: 2vmin;
-  padding: 3px;
 }
