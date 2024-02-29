@@ -1,6 +1,11 @@
 
-const WS_IP = '10.0.0.78'
+const WS_IP = '34.42.135.118'
 const WS_PORT = '65080'
+
+
+fetch('/get?confirmedclient', {
+  method: 'GET',
+})
 
 const params = new URLSearchParams(window.location.search);
 const robotID = params.get('id'); // Retrieves the value of the 'name' parameter (John)
