@@ -22,6 +22,7 @@
 #include <ArduinoWebsockets.h>
 #include <WiFi.h>
 #include "SPIFFS.h"
+#include <ESPmDNS.h> 
 
 //these 2 libs down are to stop brownout on esp32
 #include "soc/soc.h"
@@ -62,6 +63,51 @@ const char index_html[] PROGMEM = R"rawliteral(
   </form>
 </body></html>)rawliteral";
 
+const char index_html12[] PROGMEM = R"rawliteral(
+<!DOCTYPE HTML><html><head>
+  <title>Captive Portal Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+  <h3>Captive Portal Demo</h3>
+  <script>
+    if (window.matchMedia("(orientation: portrait)").matches) {
+       // you're in PORTRAIT mode
+      console.log("Going to phonecap");
+      document.getElementById("thing").innerHTML = "Now in portrait";
+      window.location.href = 'http://192.168.4.1/phoneCap.html';
+    }
+    else {
+      console.log("Going to controls");
+      window.location = 'http://192.168.4.1/controls.html';
+    }
+  </script>
+</body></html>)rawliteral";
+
+//const char index_html123[] PROGMEM = R"rawliteral(
+//<!DOCTYPE HTML>
+//<html>
+//<head>
+//  <title>Captive Portal Demo</title>
+//  <meta name="viewport" content="width=device-width, initial-scale=1">
+//</head>
+//<body>
+//  <h3>Captive Portal Demo</h3>
+//  <p id="thing">This is a test</p>
+//  <br><br>
+//  <script>
+////    if (window.matchMedia("(orientation: portrait)").matches) {
+////      // you're in PORTRAIT mode
+////      console.log("Going to phonecap");
+////      document.getElementById("thing").innerHTML = "Now in portrait";
+////      window.location.replace("http://192.168.4.1/phoneCap.html");
+////    } 
+////    else {
+////      console.log("Going to controls");
+////      window.location.replace("http://192.168.4.1/controls.html");
+////    }
+//  </script>
+//</body></html>)rawliteral";
+
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
@@ -92,15 +138,15 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 void setupServer() {
     server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/controls.html");
-    Serial.println("Client Connected");
-    client_connected = true;
+//    Serial.println("Client Connected");
+//    client_connected = true;
 
   });
 
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest * request) {
     String inputMessage;
     String inputParam;
-
+    Serial.println("got get request");
     if (request->hasParam("ssid")) {
       inputMessage = request->getParam("ssid")->value();
       inputParam = "ssid";
@@ -116,6 +162,10 @@ void setupServer() {
       password = inputMessage;
       Serial.println(inputMessage);
       valid_password_received = true;
+    }
+    if (request->hasParam("confirmedclient")) {
+      client_connected = true;
+      Serial.println("Client Connected");
     }
     request->send(200, "text/html", "The values entered by you have been successfully sent to the device. It will now attempt WiFi connection");
   });
@@ -133,9 +183,11 @@ class CaptiveRequestHandler : public AsyncWebHandler {
     }
     
     void handleRequest(AsyncWebServerRequest *request) {
-      request->send(SPIFFS, "/controls.html");
-      Serial.println("Client Connected");
-      client_connected = true;
+      request->send(SPIFFS, "/phoneCap.html");
+//      request->send_P(200, "text/html", index_html12);
+//      request->redirect("/");
+//      Serial.println("Client Connected");
+//      client_connected = true;
 
     }
 };
@@ -166,11 +218,8 @@ void setup() {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
-
-  //set up led
-//  ledcSetup(7, 5000, 8);
-//  ledcAttachPin(4, 7);  //pin4 is LED
-
+  
+  
   //set up motors
   initMotors();
 
@@ -190,11 +239,15 @@ void setup() {
   Serial.println(WiFi.localIP());   //You can get IP address assigned to ESP
 
   StartCaptivePortal();
-  while( !client_connected ){
-    dnsServer.processNextRequest();
-    delay(10);   
+  if (!MDNS.begin("esp32")) {
+      Serial.println("Error setting up MDNS responder!");
+      while(1) {
+          delay(1000);
+      }
   }
+  MDNS.addService("http", "tcp", 80);
   
+  // start websocket server
   xserver.listen(65080);
   Serial.print("Is server live? ");
   Serial.println(xserver.available());
@@ -211,7 +264,12 @@ void setup() {
     ledcWrite(7,0);
     delay(200);    
   }  
-  
+  while( !client_connected ){
+    dnsServer.processNextRequest();
+    delay(10);   
+  }
+//  delay(10000); 
+
 }   
 
 void loop() {
@@ -221,13 +279,14 @@ void loop() {
   xclient.onMessage(&callbackfunc);
   
   Serial.println("testing 2");
-
+  dnsServer.processNextRequest();
  
   // send data to client
   while(xclient.available()) {
     xclient.poll();
-    if(frameCount%10 == 0){
-      MPULoop();
+    if(frameCount%4 == 0){
+//      MPULoop();
+        dnsServer.processNextRequest();
     }else{
       videoLoop();  
     }
@@ -237,5 +296,5 @@ void loop() {
     delay(20);
   }
   
-  delay(1000);
+//  delay(1000);
 }
