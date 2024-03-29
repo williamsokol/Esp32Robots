@@ -23,6 +23,8 @@
 #include <WiFi.h>
 #include "SPIFFS.h"
 #include <ESPmDNS.h> 
+#include <Preferences.h>
+
 
 //these 2 libs down are to stop brownout on esp32
 #include "soc/soc.h"
@@ -36,7 +38,12 @@ String ssid;
 String password;
 bool is_setup_done = false;
 bool client_connected = false;
+
+bool valid_ssid_received = false;
 bool valid_password_received = false;
+String ssidString;// = String(ssid);
+String passwordString;// = String(password);
+
 bool wifi_timeout = false;
 // const char* ssid = "William"; //Enter SSID
 // const char* password = "12345678"; //Enter Password
@@ -44,6 +51,8 @@ DNSServer dnsServer;
 WebsocketsServer xserver;
 WebsocketsClient xclient;
 AsyncWebServer server(80);
+
+Preferences preferences;
 
 int frameCount = 0;
 
@@ -83,30 +92,7 @@ const char index_html12[] PROGMEM = R"rawliteral(
   </script>
 </body></html>)rawliteral";
 
-//const char index_html123[] PROGMEM = R"rawliteral(
-//<!DOCTYPE HTML>
-//<html>
-//<head>
-//  <title>Captive Portal Demo</title>
-//  <meta name="viewport" content="width=device-width, initial-scale=1">
-//</head>
-//<body>
-//  <h3>Captive Portal Demo</h3>
-//  <p id="thing">This is a test</p>
-//  <br><br>
-//  <script>
-////    if (window.matchMedia("(orientation: portrait)").matches) {
-////      // you're in PORTRAIT mode
-////      console.log("Going to phonecap");
-////      document.getElementById("thing").innerHTML = "Now in portrait";
-////      window.location.replace("http://192.168.4.1/phoneCap.html");
-////    } 
-////    else {
-////      console.log("Going to controls");
-////      window.location.replace("http://192.168.4.1/controls.html");
-////    }
-//  </script>
-//</body></html>)rawliteral";
+
 
 
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
@@ -136,12 +122,17 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
     }
 }
 void setupServer() {
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/controls.html");
 //    Serial.println("Client Connected");
 //    client_connected = true;
 
   });
+  server.on("/connect", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    request->send_P(200, "text/html", index_html);
+//    initWifi();
+  });
+  
 
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest * request) {
     String inputMessage;
@@ -150,23 +141,25 @@ void setupServer() {
     if (request->hasParam("ssid")) {
       inputMessage = request->getParam("ssid")->value();
       inputParam = "ssid";
-      ssid = inputMessage;
+      ssidString = inputMessage;
       Serial.println(inputMessage);
 
-      // valid_ssid_received = true;
+      valid_ssid_received = true;
     }
 
     if (request->hasParam("password")) {
       inputMessage = request->getParam("password")->value();
       inputParam = "password";
-      password = inputMessage;
+      passwordString = inputMessage;
       Serial.println(inputMessage);
       valid_password_received = true;
+//      WiFiStationSetup(ssidString, passwordString);
     }
     if (request->hasParam("confirmedclient")) {
       client_connected = true;
       Serial.println("Client Connected");
     }
+    
     request->send(200, "text/html", "The values entered by you have been successfully sent to the device. It will now attempt WiFi connection");
   });
   
@@ -194,7 +187,7 @@ class CaptiveRequestHandler : public AsyncWebHandler {
 void WiFiSoftAPSetup()
 {
   WiFi.mode(WIFI_AP);
-  WiFi.softAP("BallyBots");
+  WiFi.softAP("BallyBot2");
   Serial.print("AP IP address: "); Serial.println(WiFi.softAPIP());
 }
 void StartCaptivePortal() {
@@ -207,6 +200,10 @@ void StartCaptivePortal() {
   server.addHandler(new CaptiveRequestHandler()).setFilter(ON_AP_FILTER);//only when requested from AP
   server.begin();
   dnsServer.processNextRequest();
+}
+void StopCaptivePortal(){
+//  server.end();
+//    xserver
 }
 
 void setup() {
@@ -285,8 +282,9 @@ void loop() {
   while(xclient.available()) {
     xclient.poll();
     if(frameCount%4 == 0){
-//      MPULoop();
         dnsServer.processNextRequest();
+        WifiLoop();
+        
     }else{
       videoLoop();  
     }
