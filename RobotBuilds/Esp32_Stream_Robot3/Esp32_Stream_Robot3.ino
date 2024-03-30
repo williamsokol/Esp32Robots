@@ -75,11 +75,12 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 
 
 void setup() {
+  WiFi.setSleep(false);
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // prevent brownouts by silencing them
   
   Serial.begin(115200);
 
-    // set up led DO NOT SET PIN TO OUT AFTER USING LEDC
+  // set up led DO NOT SET PIN TO OUT AFTER USING LEDC
   ledcSetup(7, 5000, 8); // set channl 7 
   ledcAttachPin(4, 7);  //pin4 is LED to channel 7
 
@@ -125,15 +126,9 @@ void setup() {
   }
   Serial.println("Websocket Connected!");
   
+
+  flashLED(1);
   
-  for (int i=0;i<3;i++) 
-  {
-    // Serial.println("Test");
-    ledcWrite(7,5);  // flash led
-    delay(200);
-    ledcWrite(7,0);
-    delay(200);    
-  }  
   
 }   
 
@@ -155,51 +150,15 @@ void loop() {
   xclient.onMessage(&callbackfunc);
   xclient.poll();
 
-  // updateLED(1);
-  //recive data from client
-  // xclient = xserver.accept();
-  // xclient.onMessage(&callbackfunc);
-  // xclient.poll();
-  
-
-  // 
- 
-  // // send data to client
-  // while(!xclient.available()) {
-    
-    
-
-  //   frameCount += 1;
-  //   //Serial.println("test ");
-  //   delay(20);
-  // }
-  
-  // delay(20);
 }
 
-void updateLED(int mode) {
-  if (mode == 1){
-    static int previousMillis;
-    static const int fadeTime = 2000;
-    static int fadeDir = 1;
-    static int brightness;
-    unsigned long currentMillis = millis();  // Get the current time
-    
-    // Check if it's time to update the LED brightness
-    if (currentMillis - previousMillis >= fadeTime / 255) {
-      previousMillis = currentMillis;  // Update the previous time
-      
-      // Increment or decrement the brightness value
-      if (brightness > 255) {
-        fadeDir = -1;
-      } else if(brightness < 0){
-        fadeDir =1;
-      }
-      brightness += fadeDir;
-      
-      ledcWrite(7,brightness); // channel 7 is pin 4
-      // analogWrite(ledPin, brightness);  // Set the LED brightness
-    }
-  }
+void flashLED(int mode) {
+  for (int i=0;i<3;i++) 
+  {
+    // Serial.println("Test");
+    ledcWrite(7,5);  // flash led
+    delay(200);
+    ledcWrite(7,0);
+    delay(200);    
+  }  
 }
-

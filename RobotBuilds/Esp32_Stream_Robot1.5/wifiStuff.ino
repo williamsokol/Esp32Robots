@@ -80,5 +80,7 @@ void WiFiStationSetup(String rec_ssid, String rec_password)
     preferences.putBool("is_setup_done", is_setup_done);
     preferences.putString("rec_ssid", rec_ssid);
     preferences.putString("rec_password", rec_password);
+    Serial.print("Is websocketserver live? ");
+    Serial.println(xserver.available());
   }
 }
