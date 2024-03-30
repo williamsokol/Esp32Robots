@@ -49,7 +49,7 @@ wsServer.on('connection', async (ws, req)=>{
    
 });
 
-app.get('/',(req,res)=>res.sendFile(path.resolve(__dirname, './index.html')));
+app.get('/',(req,res)=>res.sendFile(path.resolve(__dirname, './Pages/index.html')));
 app.get('/LobbyList',(req,res)=>res.sendFile(path.resolve(__dirname, './LobbyList.html')));
 app.get('/client',(req,res)=> {
     const filePath = './Pages/client.js';

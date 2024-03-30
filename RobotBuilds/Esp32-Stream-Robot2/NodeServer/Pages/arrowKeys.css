@@ -12,12 +12,12 @@
   /* padding-top: ; */
   /* height: 2%; */
   margin: auto;
-  font-size: 30px;
+  font-size: min(60px, 5vw);
 }
 
 .arr {
   cursor: pointer;
-  width: 10%;
+  width:  min(70px, 10vw);
   /* height: 30%; */
   /* padding-bottom: 2.5%; */
   text-align: center;
