@@ -44,8 +44,145 @@ const uint16_t websocket_server_port = 65080;
 
 int frameCount = 0;
 
+WebsocketsServer xserver;
 WebsocketsClient xclient;
 
+
+
+
+void setup() {
+  WiFi.setSleep(false);
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // prevent brownouts by silencing them
+  
+  Serial.begin(115200);
+
+  if(!SPIFFS.begin(true)){
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
+
+  // set up led DO NOT SET PIN TO OUT AFTER USING LEDC
+  ledcSetup(7, 5000, 8); // set channl 7 
+  ledcAttachPin(4, 7);  //pin4 is LED to channel 7
+
+  //set up motors
+  initMotors();
+
+  //set up camera
+  initCamera();
+
+  //set up wifi
+  initWifi();
+
+  Serial.println("done with inits");
+  preferences.begin("my-pref", false);
+  
+ 
+  // Wait some time to connect to wifi
+//  for(int i = 0; i < 15 && WiFi.status() != WL_CONNECTED; i++) {
+//      Serial.print(".");
+//      delay(1000);
+//  }
+//  
+//  Serial.println("");
+//  Serial.println("WiFi connected");
+//  Serial.println("Local IP address: ");
+//  Serial.println(WiFi.localIP());   //You can get IP address assigned to ESP
+
+  //xserver.listen(80);
+  //Serial.print("Is server live? ");
+  //Serial.println(xserver.available());
+//  Serial.print("Connecting to server: ");
+//  Serial.println(websocket_server_host);
+//  xclient.addHeader("type", "robot");
+//  while(!xclient.connect(websocket_server_host, websocket_server_port, "/")){
+//    delay(500);
+//    Serial.print(".");
+//  }
+//  Serial.println("Websocket Connected!");
+  
+
+  flashLED(1);
+  
+  while( !client_connected ){
+    dnsServer.processNextRequest();
+    delay(1);   
+  }
+  flashLED(2);  
+}   
+
+void loop() {
+  Serial.print("OnInternet: ");
+  Serial.println(OnInternet);
+  static int frames = 0;
+  frames += 1;
+  if(frames%100 == 0){
+    static int oldMillis = 0;
+    int time = millis();
+    Serial.print("on frame: ");
+    Serial.print(frames);
+    Serial.print(" at time: ");
+    Serial.println((time-oldMillis)/100 );
+    oldMillis = time;
+  }
+ 
+
+  if(OnInternet == AP){
+    Serial.println("entering APLoop");
+    APLoop();
+  }
+  else if(OnInternet == Connecting){
+    Serial.println("connecting");
+    CheckForRouter();
+//    CheckForServer();
+  }else if(OnInternet == InServer){
+    while (true){
+      videoLoop();
+      xclient.onMessage(&callbackfunc);
+      xclient.poll();  
+    }    
+  }
+
+  dnsServer.processNextRequest();
+  delay(1000); // This is to make sure that Oninternet Updates before APLoop is ran
+}
+
+void flashLED(int mode) {
+  for (int i=0;i<mode  ;i++) 
+  {
+    // Serial.println("Test");
+    ledcWrite(7,5);  // flash led
+    delay(200);
+    ledcWrite(7,0);
+    delay(200);    
+  }  
+}
+
+void APLoop(){
+  
+  Serial.println("testing-1");
+  xclient = xserver.accept();
+  Serial.println("testing-1.1");
+  xclient.onMessage(&callbackfunc);
+  Serial.println("testing-1.2");
+  dnsServer.processNextRequest();
+  Serial.println("testing0");
+  int frameCount = 0;
+  while(xclient.available()) {
+    frameCount++;
+    if(frameCount%10 == 0){
+      Serial.println("testing");
+//      CheckForRouter();
+//      continue; 
+    }
+
+    xclient.poll();
+    dnsServer.processNextRequest();
+    videoLoop();
+     
+  }  
+  
+}
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
     char buff[20];
@@ -71,94 +208,4 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
       lightOn = !lightOn;
       ledcWrite(7,lightOn? 5:0); 
     }
-}
-
-
-void setup() {
-  WiFi.setSleep(false);
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // prevent brownouts by silencing them
-  
-  Serial.begin(115200);
-
-  // set up led DO NOT SET PIN TO OUT AFTER USING LEDC
-  ledcSetup(7, 5000, 8); // set channl 7 
-  ledcAttachPin(4, 7);  //pin4 is LED to channel 7
-
-  //set up motors
-  initMotors();
-
-  //set up camera
-  initCamera();
-
-  //set up wifi
-  initWifi();
-
-  Serial.println("done with inits");
-  preferences.begin("my-pref", false);
-  
-  // ssid = preferences.getString("rec_ssid", "Sample_SSID");
-  // password = preferences.getString("rec_password", "abcdefgh");
-
-
-  // // Connect to wifi
-  // WiFi.begin(ssid.c_str(), password.c_str());
- 
-  // Wait some time to connect to wifi
-  for(int i = 0; i < 15 && WiFi.status() != WL_CONNECTED; i++) {
-      Serial.print(".");
-      delay(1000);
-  }
-  
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("Local IP address: ");
-  Serial.println(WiFi.localIP());   //You can get IP address assigned to ESP
-
-  //xserver.listen(80);
-  //Serial.print("Is server live? ");
-  //Serial.println(xserver.available());
-  Serial.print("Connecting to server: ");
-  Serial.println(websocket_server_host);
-  xclient.addHeader("type", "robot");
-  while(!xclient.connect(websocket_server_host, websocket_server_port, "/")){
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("Websocket Connected!");
-  
-
-  flashLED(1);
-  
-  
-}   
-
-void loop() {
-  static int frames = 0;
-  frames += 1;
-  if(frames%100 == 0){
-    static int oldMillis = 0;
-    int time = millis();
-    Serial.print("on frame: ");
-    Serial.print(frames);
-    Serial.print(" at time: ");
-    Serial.println((time-oldMillis)/100 );
-    oldMillis = time;
-  }
-
-  videoLoop();
-
-  xclient.onMessage(&callbackfunc);
-  xclient.poll();
-
-}
-
-void flashLED(int mode) {
-  for (int i=0;i<3;i++) 
-  {
-    // Serial.println("Test");
-    ledcWrite(7,5);  // flash led
-    delay(200);
-    ledcWrite(7,0);
-    delay(200);    
-  }  
 }

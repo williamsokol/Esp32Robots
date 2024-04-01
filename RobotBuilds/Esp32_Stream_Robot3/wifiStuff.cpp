@@ -4,19 +4,35 @@
 DNSServer dnsServer;
 AsyncWebServer server(80);
 
+//externs
 String ssidString;// = String(ssid);
 String passwordString;// = String(password);
+bool client_connected;
+enum internetStatus OnInternet = None;
+
 bool is_setup_done = false;
 bool valid_ssid_received = false;
 bool valid_password_received = false;
 bool wifi_timeout = false;
 
 void setupServer() {
+  server.serveStatic("/", SPIFFS, "/").setDefaultFile("controls.html");
+  
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send_P(200, "text/html", index_html);
+//    request->send_P(200, "text/html", index_html);
+    request->send(SPIFFS, "/controls.html");
     Serial.println("Client Connected");
   });
 
+  server.on("/connect", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    
+    OnInternet = Connecting;
+    Serial.println("trying to connect to internet");
+    Serial.print("OnInternet: ");
+    Serial.println(OnInternet);
+    request->send_P(200, "text/html", index_html);
+  });
+  
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest * request) {
     String inputMessage;
     String inputParam;
@@ -36,17 +52,24 @@ void setupServer() {
       Serial.println(inputMessage);
       valid_password_received = true;
     }
+    
+    if (request->hasParam("confirmedclient")) {
+      client_connected = true;
+      Serial.println("Client Connected");
+    }
     // Serial.print(valid_ssid_received);
     // Serial.println(valid_password_received);
     request->send(200, "text/html", "The values entered by you have been successfully sent to the device. It will now attempt WiFi connection");
   });
+  
 }
 
 void WiFiSoftAPSetup()
 {
   WiFi.mode(WIFI_AP);
-  WiFi.softAP("esp-captive");
+  WiFi.softAP("BallyBot");
   Serial.print("AP IP address: "); Serial.println(WiFi.softAPIP());
+  OnInternet = AP;
 }
 
 void WiFiStationSetup(String rec_ssid, String rec_password)
@@ -86,6 +109,7 @@ void WiFiStationSetup(String rec_ssid, String rec_password)
     preferences.putBool("is_setup_done", is_setup_done);
     preferences.putString("rec_ssid", rec_ssid);
     preferences.putString("rec_password", rec_password);
+    OnInternet = Internet;
   }
 }
 
@@ -109,30 +133,70 @@ void initWifi() {
   ssidString = preferences.getString("rec_ssid", "Sample_SSID");
   passwordString = preferences.getString("rec_password", "abcdefgh");
 
-  if (!is_setup_done)
-  {
-    StartCaptivePortal();
-  }
-  else
-  {
-    Serial.println("Using saved SSID and Password to attempt WiFi Connection!");
-    Serial.print("Saved SSID is ");Serial.println(ssidString);
-    Serial.print("Saved Password is ");Serial.println(passwordString);
-    WiFiStationSetup(ssidString, passwordString);
-  }
+  StartCaptivePortal();
 
-  while (!is_setup_done)
-  {
-    dnsServer.processNextRequest();
-    delay(10);
+  xserver.listen(65080);
+  Serial.print("Is server live? ");
+  Serial.println(xserver.available());
+
+//  if(is_setup_done)
+//  {
+//    Serial.println("Using saved SSID and Password to attempt WiFi Connection!");
+//    Serial.print("Saved SSID is ");Serial.println(ssidString);
+//    Serial.print("Saved Password is ");Serial.println(passwordString);
+//    WiFiStationSetup(ssidString, passwordString);
+//  }
+//
+//  while (!is_setup_done)
+//  {
+//    dnsServer.processNextRequest();
+//    delay(10);
+//    if (valid_ssid_received && valid_password_received)
+//    {
+//      Serial.println("Attempting WiFi Connection!");
+//      WiFiStationSetup(ssidString, passwordString);
+//    }
+//  }
+//
+//  Serial.println("All Done!");
+
+  //Your Additional Setup code
+}
+void CheckForRouter(){
+    Serial.println("Test1");
     if (valid_ssid_received && valid_password_received)
     {
       Serial.println("Attempting WiFi Connection!");
       WiFiStationSetup(ssidString, passwordString);
+      if(OnInternet == Internet){
+          CheckForServer();
+      }
     }
+    
+}
+void CheckForServer(){
+  WebsocketsClient xclient2;
+  for(int i = 0; i < 15 && WiFi.status() != WL_CONNECTED; i++) {
+    Serial.print(".");
+    delay(1000);
   }
+  
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("Local IP address: ");
+  Serial.println(WiFi.localIP());   //You can get IP address assigned to ESP
 
-  Serial.println("All Done!");
-
-  //Your Additional Setup code
+//  xserver.listen(80);
+//  Serial.print("Is server live? ");
+//  Serial.println(xserver.available());
+  Serial.print("Connecting to server: ");
+  Serial.println(websocket_server_host);
+  xclient2.addHeader("type", "robot");
+  while(!xclient2.connect(websocket_server_host, websocket_server_port, "/")){
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Websocket Connected!");
+  xclient = xclient2;
+  OnInternet = InServer;
 }

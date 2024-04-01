@@ -124,13 +124,10 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 void setupServer() {
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/controls.html");
-//    Serial.println("Client Connected");
-//    client_connected = true;
 
   });
   server.on("/connect", HTTP_GET, [] (AsyncWebServerRequest * request) {
     request->send_P(200, "text/html", index_html);
-//    initWifi();
   });
   
 
@@ -187,7 +184,7 @@ class CaptiveRequestHandler : public AsyncWebHandler {
 void WiFiSoftAPSetup()
 {
   WiFi.mode(WIFI_AP);
-  WiFi.softAP("BallyBot2");
+  WiFi.softAP("BallyBot3");
   Serial.print("AP IP address: "); Serial.println(WiFi.softAPIP());
 }
 void StartCaptivePortal() {
@@ -231,11 +228,11 @@ void setup() {
   // WiFi.softAP("BallyBots");
 
   Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());   //You can get IP address assigned to ESP
+//  Serial.println("WiFi connected");
+//  Serial.println("IP address: ");
+//  Serial.println(WiFi.localIP());   //You can get IP address assigned to ESP
 
-  StartCaptivePortal();
+  StartCaptivePortal(); 
   if (!MDNS.begin("esp32")) {
       Serial.println("Error setting up MDNS responder!");
       while(1) {

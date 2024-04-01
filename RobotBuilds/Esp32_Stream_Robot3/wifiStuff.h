@@ -6,6 +6,8 @@
 extern String ssidString;
 extern String passwordString;
 
+extern bool client_connected;
+
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html><head>
   <title>Captive Portal Demo</title>
@@ -33,7 +35,8 @@ class CaptiveRequestHandler : public AsyncWebHandler {
     }
 
     void handleRequest(AsyncWebServerRequest *request) {
-      request->send_P(200, "text/html", index_html);
+//      request->send_P(200, "text/html", index_html);
+      request->send(SPIFFS, "/phoneCap.html");
     }
 };
 
@@ -43,3 +46,5 @@ void setupServer();
 void WiFiSoftAPSetup();
 void WiFiStationSetup(String rec_ssid, String rec_password);
 void StartCaptivePortal();
+void CheckForRouter();
+void CheckForServer();
