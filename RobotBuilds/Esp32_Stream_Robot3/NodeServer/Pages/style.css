@@ -1,0 +1,227 @@
+*{
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: white;
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
+}
+
+.divider{
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  height: 100%;
+}
+
+#mainPage{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  display: grid;
+  grid-template-columns: .3fr 1fr .3fr;
+  grid-template-rows: 1fr;
+
+  
+  background-image: radial-gradient(
+    farthest-corner at 50% 100%,
+    #e48349 -300%,
+    #000 80%
+  );
+  
+
+}
+.textureBG{
+  background-image: radial-gradient(
+    farthest-corner at 50% 100%,
+    #e48349 -150%,
+    #000 80%
+  );
+}
+.centerPanel{
+  /* overflow: hidden; */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #151516;
+  grid-column: 2/3;
+  display: grid;
+  /* grid-template-columns: .3fr 1fr .3fr; */
+  grid-template-rows: min-content 1fr;
+
+  border-left: 1px #ffffff solid;
+  border-right: 1px #ffffff solid;
+}
+
+.controlPanel{
+  margin: 2% 10% 0% 10%;
+  padding: 2%;
+  background-color: #1a1a1b;
+  display: grid;
+  grid-template-rows: auto 80px;
+  
+}
+
+.videoPanel{
+  /* grid-column: 1/-1; */
+  background-color: #000000;
+  display: grid;
+}
+
+@media (orientation: portrait) {
+  #mainPage {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+  .centerPanel{
+    grid-column: 1/2;
+  }
+  h1{
+    display: none;
+  }
+  .show{
+    display: block ruby;
+  }
+  #logotextsvg{
+    display: none;
+  }
+}
+
+#stream {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: 60vh;
+  margin: auto;
+}
+
+#controls {
+  display: grid;
+  /* grid-template-rows: 1fr; */
+  /* grid-template-columns: minmax(1fr, mincontent) min-content; */
+  padding: 5px;
+  /* margin: auto; */
+}
+
+#joyDiv {
+  
+  border-radius: 25%;
+  background-color: #e0e0e0;
+}
+
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.toggle-button {
+  background-color: #e8e8e8;
+  /* border: none; */
+  padding: 5px;
+  margin: 0px 2% 0px 2%;
+  height: 100%;
+  width: 40%;
+  font-size: 1.5vmin;
+  cursor: pointer;
+}
+
+.toggle-button.active {
+  background-color: #555555;
+  border-color: white;
+  color: #ffffff;
+}
+
+#lightBtn{
+  height: 100%;
+  color: black;
+}
+
+ul {
+  /* position: fixed; */
+  /* top: 0; */
+  /* width: 100%; */
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /* background-color: #333; */
+  background: linear-gradient(135deg, #1a1a1b 50%, #000000);
+  border-bottom: medium solid white;;
+  
+  display: grid;
+  grid-template-columns: auto 1fr 1fr auto;
+  align-items: center;
+}
+
+li {
+  float: left;
+  display: flex;
+}
+
+li a {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 0px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: #111;
+}
+
+h1{
+  position: fixed;
+  top: 0;
+  left: 50%;
+  text-align: center;
+  color: white;
+  transform: translate(-50%,0);
+  /* width: 100%; */
+}
+
+.buttons{
+ display: grid;
+ grid-row: auto;
+ grid-template-columns: 2fr 1fr 1fr 1fr; 
+ background-color: #000;
+ /* border-radius: 5px; */
+ margin: 10px 0 0px 0;
+ padding: 5px;
+}
+
+.UI{
+  color: white;
+  /* background: #555555; */
+  margin: 0px 5px 0px 5px;
+  border: 1px solid white  ;
+  border-radius: 5px;
+  font-size: 2vmin;
+  padding: 3px;
+}
+
+p{
+  font-size: 4vmin;
+  padding: 3vmin;
+}
+h2{
+  font-size: 5vmin;
+  text-align: center;
+}
+.highlight{
+  color: #e48349;
+}
+button{
+  color: black;
+}
