@@ -82,7 +82,8 @@ async function handleRobotConnection(ws,req)
     let lastActivityTime = Date.now();
     const timeoutDuration = 60000;
 
-    ws.id = await crud.smallestUnusedID()
+    // await crud.smallestUnusedID()
+    ws.id = req.headers["mac"];
     console.log(ws.id);
     ws.subbedClients = [];
     
@@ -146,4 +147,4 @@ async function handleWebConnection(ws,req)
         }
     })
 }
-// console.log(Object.keys(base[i]));
+// (Object.keys(base[i]));

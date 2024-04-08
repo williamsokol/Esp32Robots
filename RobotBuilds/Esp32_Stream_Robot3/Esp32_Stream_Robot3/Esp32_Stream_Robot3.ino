@@ -39,7 +39,7 @@ const char* RobotName = "Ballyb";
 // String password = "Tablelamp!"; //Enter Password
 
 //server ip & port
-const char* websocket_server_host = "34.42.135.118";
+const char* websocket_server_host = "10.0.0.78"; //"34.42.135.118";
 const uint16_t websocket_server_port = 65080;
 
 int frameCount = 0;
@@ -136,11 +136,8 @@ void loop() {
     CheckForRouter();
 //    CheckForServer();
   }else if(OnInternet == InServer){
-    while (true){
-      videoLoop();
-      xclient.onMessage(&callbackfunc);
-      xclient.poll();  
-    }    
+    flashLED(3);
+    InServerLoop();
   }
 
   dnsServer.processNextRequest();
@@ -160,28 +157,25 @@ void flashLED(int mode) {
 
 void APLoop(){
   
-  Serial.println("testing-1");
   xclient = xserver.accept();
-  Serial.println("testing-1.1");
   xclient.onMessage(&callbackfunc);
-  Serial.println("testing-1.2");
   dnsServer.processNextRequest();
-  Serial.println("testing0");
-  int frameCount = 0;
+//  int frameCount = 0;
   while(xclient.available()) {
-    frameCount++;
-    if(frameCount%10 == 0){
-      Serial.println("testing");
-//      CheckForRouter();
-//      continue; 
-    }
 
     xclient.poll();
     dnsServer.processNextRequest();
     videoLoop();
      
   }  
-  
+}
+
+void InServerLoop(){
+    while (true){
+      videoLoop();
+      xclient.onMessage(&callbackfunc);
+      xclient.poll();  
+    }    
 }
 void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
@@ -206,6 +200,6 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
       //flip light
       static bool lightOn = false;
       lightOn = !lightOn;
-      ledcWrite(7,lightOn? 5:0); 
+      ledcWrite(7,lightOn? 50:0); 
     }
 }

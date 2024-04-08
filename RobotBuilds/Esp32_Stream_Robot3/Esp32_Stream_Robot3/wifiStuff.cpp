@@ -87,7 +87,7 @@ void WiFiStationSetup(String rec_ssid, String rec_password)
   while (WiFi.status() != WL_CONNECTED) {
     delay(2000);
     Serial.print(".");
-    if (millis() - t1 > 50000) //50 seconds elapsed connecting to WiFi
+    if (millis() - t1 > 4000) //50 seconds elapsed connecting to WiFi
     {
       Serial.println();
       Serial.println("Timeout connecting to WiFi. The SSID and Password seem incorrect.");
@@ -132,6 +132,8 @@ void initWifi() {
   is_setup_done = preferences.getBool("is_setup_done", false);
   ssidString = preferences.getString("rec_ssid", "Sample_SSID");
   passwordString = preferences.getString("rec_password", "abcdefgh");
+  valid_ssid_received = true;
+  valid_password_received = true;
 
   StartCaptivePortal();
 
@@ -139,28 +141,6 @@ void initWifi() {
   Serial.print("Is server live? ");
   Serial.println(xserver.available());
 
-//  if(is_setup_done)
-//  {
-//    Serial.println("Using saved SSID and Password to attempt WiFi Connection!");
-//    Serial.print("Saved SSID is ");Serial.println(ssidString);
-//    Serial.print("Saved Password is ");Serial.println(passwordString);
-//    WiFiStationSetup(ssidString, passwordString);
-//  }
-//
-//  while (!is_setup_done)
-//  {
-//    dnsServer.processNextRequest();
-//    delay(10);
-//    if (valid_ssid_received && valid_password_received)
-//    {
-//      Serial.println("Attempting WiFi Connection!");
-//      WiFiStationSetup(ssidString, passwordString);
-//    }
-//  }
-//
-//  Serial.println("All Done!");
-
-  //Your Additional Setup code
 }
 void CheckForRouter(){
     Serial.println("Test1");
@@ -192,6 +172,7 @@ void CheckForServer(){
   Serial.print("Connecting to server: ");
   Serial.println(websocket_server_host);
   xclient2.addHeader("type", "robot");
+  xclient2.addHeader("mac", std::to_string(ESP.getEfuseMac()).c_str());
   while(!xclient2.connect(websocket_server_host, websocket_server_port, "/")){
     delay(500);
     Serial.print(".");
@@ -199,4 +180,5 @@ void CheckForServer(){
   Serial.println("Websocket Connected!");
   xclient = xclient2;
   OnInternet = InServer;
+  
 }
