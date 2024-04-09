@@ -130,18 +130,21 @@ void loop() {
   if(OnInternet == AP){
     Serial.println("entering APLoop");
     APLoop();
+    delay(1000); // This is to make sure that Oninternet Updates before APLoop is ran again
+    dnsServer.processNextRequest();
   }
   else if(OnInternet == Connecting){
     Serial.println("connecting");
     CheckForRouter();
+    
+    
 //    CheckForServer();
   }else if(OnInternet == InServer){
     flashLED(3);
     InServerLoop();
   }
 
-  dnsServer.processNextRequest();
-  delay(1000); // This is to make sure that Oninternet Updates before APLoop is ran
+  
 }
 
 void flashLED(int mode) {
@@ -160,11 +163,14 @@ void APLoop(){
   xclient = xserver.accept();
   xclient.onMessage(&callbackfunc);
   dnsServer.processNextRequest();
-//  int frameCount = 0;
+  int frameCount = 0;
   while(xclient.available()) {
-
+    frameCount++;
+    if (frameCount%10 == 0){
+      dnsServer.processNextRequest();
+      continue;
+    }
     xclient.poll();
-    dnsServer.processNextRequest();
     videoLoop();
      
   }  
@@ -200,6 +206,6 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
       //flip light
       static bool lightOn = false;
       lightOn = !lightOn;
-      ledcWrite(7,lightOn? 50:0); 
+      ledcWrite(7,lightOn? 5:0); 
     }
 }

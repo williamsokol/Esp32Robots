@@ -4,6 +4,7 @@
 DNSServer dnsServer;
 AsyncWebServer server(80);
 
+
 //externs
 String ssidString;// = String(ssid);
 String passwordString;// = String(password);
@@ -14,13 +15,17 @@ bool is_setup_done = false;
 bool valid_ssid_received = false;
 bool valid_password_received = false;
 bool wifi_timeout = false;
+char defaultAP [30] = "BallyBot";
+
 
 void setupServer() {
   server.serveStatic("/", SPIFFS, "/").setDefaultFile("controls.html");
   
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
-//    request->send_P(200, "text/html", index_html);
+    
     request->send(SPIFFS, "/controls.html");
+      //request->send(SPIFFS, "/controls.html", String(), false, processor);
+
     Serial.println("Client Connected");
   });
 
@@ -30,6 +35,7 @@ void setupServer() {
     Serial.println("trying to connect to internet");
     Serial.print("OnInternet: ");
     Serial.println(OnInternet);
+    
     request->send_P(200, "text/html", index_html);
   });
   
@@ -55,7 +61,11 @@ void setupServer() {
     
     if (request->hasParam("confirmedclient")) {
       client_connected = true;
-      Serial.println("Client Connected");
+      Serial.println("Client confirmed");
+      AsyncWebServerResponse *response = request->beginResponse(200);
+      response->addHeader("robotName", defaultAP);
+      request->send(response);
+      return;
     }
     // Serial.print(valid_ssid_received);
     // Serial.println(valid_password_received);
@@ -67,7 +77,9 @@ void setupServer() {
 void WiFiSoftAPSetup()
 {
   WiFi.mode(WIFI_AP);
-  WiFi.softAP("BallyBot");
+  
+  
+  WiFi.softAP(defaultAP);
   Serial.print("AP IP address: "); Serial.println(WiFi.softAPIP());
   OnInternet = AP;
 }
@@ -95,8 +107,10 @@ void WiFiStationSetup(String rec_ssid, String rec_password)
       valid_password_received = false;
       is_setup_done = false;
       preferences.putBool("is_setup_done", is_setup_done);
+      preferences.putString("rec_ssid", "failed");
 
       StartCaptivePortal();
+//      WiFiSoftAPSetup();
       wifi_timeout = true;
       break;
     }
@@ -132,9 +146,12 @@ void initWifi() {
   is_setup_done = preferences.getBool("is_setup_done", false);
   ssidString = preferences.getString("rec_ssid", "Sample_SSID");
   passwordString = preferences.getString("rec_password", "abcdefgh");
-  valid_ssid_received = true;
-  valid_password_received = true;
-
+  strcat(defaultAP, std::to_string(ESP.getEfuseMac()/1000000000).c_str());
+  //  if(ssidString != "failed"){
+//    valid_ssid_received = true;
+//    valid_password_received = true; 
+//  }
+  
   StartCaptivePortal();
 
   xserver.listen(65080);
@@ -148,11 +165,11 @@ void CheckForRouter(){
     {
       Serial.println("Attempting WiFi Connection!");
       WiFiStationSetup(ssidString, passwordString);
-      if(OnInternet == Internet){
-          CheckForServer();
+      if(OnInternet == Internet){ 
+        CheckForServer();
       }
     }
-    
+     
 }
 void CheckForServer(){
   WebsocketsClient xclient2;

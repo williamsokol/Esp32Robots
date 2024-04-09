@@ -64,14 +64,16 @@ document.addEventListener('keyup', function(e) {
       break
   }
 });
+function addMultipleEventListener(element, events, handler) {
+  events.forEach(e => element.addEventListener(e, handler))
+}
 
-
-document.querySelector('.left').addEventListener('mousedown', function() {
+addMultipleEventListener(document.querySelector('.left'), ['mousedown','touchdown'], function() {
   document.querySelector('.left').style.transform = 'translate(0, 2px)';
   KEYS_PRESSED["ArrowLeft"] = true;
 });
 
-document.querySelector('.left').addEventListener('mouseup', function() {
+addMultipleEventListener(document.querySelector('.left'), ['mouseup','touchup'], function() {
   document.querySelector('.left').style.transform = 'translate(0, 0)';
   delete KEYS_PRESSED["ArrowLeft"];
 });

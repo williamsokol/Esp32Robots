@@ -28,7 +28,7 @@ extern DNSServer dnsServer;
 extern const char* websocket_server_host;
 extern const uint16_t websocket_server_port;
 
-enum internetStatus { None, AP, Wifi, Connecting, Internet, InServer};
+enum internetStatus { None, SeekingClient, AP, Wifi, Connecting, Internet, InServer};
 extern enum internetStatus OnInternet;
 // };
 

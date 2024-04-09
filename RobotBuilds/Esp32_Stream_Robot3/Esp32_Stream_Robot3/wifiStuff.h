@@ -17,9 +17,9 @@ const char index_html[] PROGMEM = R"rawliteral(
   <br><br>
   <form action="/get">
     <br>
-    SSID: <input type="text" name="ssid">
+    SSID: <input type="text" name="ssid" value="%SSID%">
     <br>
-    Password: <input type="text" name="password">
+    Password: <input type="text" name="password" value="%PASS%">
     <input type="submit" value="Submit">
   </form>
 </body></html>)rawliteral";
@@ -48,3 +48,4 @@ void WiFiStationSetup(String rec_ssid, String rec_password);
 void StartCaptivePortal();
 void CheckForRouter();
 void CheckForServer();
+// String processor();
