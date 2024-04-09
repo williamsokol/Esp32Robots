@@ -43,6 +43,16 @@
   transform: translate(0, 2px);
 }
 
+@media (orientation: portrait) {
+  .arr {
+    width: min(200px, 20vw);
+    height: 8vh;
+  }
+  .keys {
+    font-size: min(100px, 18vw);
+  }
+}
+
 .up {
   position: relative;
   top: -4px;

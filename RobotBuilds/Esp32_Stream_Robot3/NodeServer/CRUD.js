@@ -79,7 +79,9 @@ async function ClearTable() {
   try {
     const { data, error } = await supabase
       .from('ConnectedRobots')
-      .delete()
+      .delete('*').neq("time_created", 0) 
+
+      
       //.match({ ID : id }); // Specify the condition to match the row you want to delete
 
     if (error) {
@@ -116,6 +118,7 @@ module.exports = {
   AddRobot,
   readlist,
   deleteRow,
+  ClearTable,
   smallestUnusedID,
 };
 

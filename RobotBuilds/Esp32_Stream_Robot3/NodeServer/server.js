@@ -21,6 +21,7 @@ const robots = []
 async function start() {
     let test = [1,2,3,4,5,6]
     test.splice(2,1)
+    crud.ClearTable();
     // const serverIP = req.socket.localAddress;
     // console.log(app);
 }start()
@@ -80,7 +81,7 @@ app.listen(HTTP_PORT, ()=> {
 async function handleRobotConnection(ws,req)
 {
     let lastActivityTime = Date.now();
-    const timeoutDuration = 60000;
+    const timeoutDuration = 10000;
 
     // await crud.smallestUnusedID()
     ws.id = req.headers["mac"];

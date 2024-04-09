@@ -68,44 +68,44 @@ function addMultipleEventListener(element, events, handler) {
   events.forEach(e => element.addEventListener(e, handler))
 }
 
-addMultipleEventListener(document.querySelector('.left'), ['mousedown','touchdown'], function() {
+addMultipleEventListener(document.querySelector('.left'), ['mousedown','touchstart'], function() {
   document.querySelector('.left').style.transform = 'translate(0, 2px)';
   KEYS_PRESSED["ArrowLeft"] = true;
 });
 
-addMultipleEventListener(document.querySelector('.left'), ['mouseup','touchup'], function() {
+addMultipleEventListener(document.querySelector('.left'), ['mouseup','touchend'], function() {
   document.querySelector('.left').style.transform = 'translate(0, 0)';
   delete KEYS_PRESSED["ArrowLeft"];
 });
 
-document.querySelector('.right').addEventListener('mousedown', function() {
+addMultipleEventListener(document.querySelector('.right'), ['mousedown','touchstart'], function() {
   document.querySelector('.right').style.transform = 'translate(0, 2px)';
   KEYS_PRESSED["ArrowRight"] = true;
 });
 
-document.querySelector('.right').addEventListener('mouseup', function() {
+addMultipleEventListener(document.querySelector('.right'), ['mouseup','touchend'], function() {
   document.querySelector('.right').style.transform = 'translate(0, 0)';
   delete KEYS_PRESSED["ArrowRight"];
 });
 
-document.querySelector('.up').addEventListener('mousedown', function() {
+addMultipleEventListener(document.querySelector('.up'), ['mousedown','touchstart'], function() {
   document.querySelector('.left').style.transform = 'translate(0, 2px)';
   document.querySelector('.down').style.transform = 'translate(0, 2px)';
   document.querySelector('.right').style.transform = 'translate(0, 2px)';
   KEYS_PRESSED["ArrowUp"] = true;
 });
 
-document.querySelector('.up').addEventListener('mouseup', function() {
+addMultipleEventListener(document.querySelector('.up'), ['mouseup','touchend'], function() {
   delete KEYS_PRESSED["ArrowUp"];
 
 });
 
-document.querySelector('.down').addEventListener('mousedown', function() {
+addMultipleEventListener(document.querySelector('.down'), ['mousedown','touchstart'], function() {
   document.querySelector('.down').style.transform = 'translate(0, 2px)';
   KEYS_PRESSED["ArrowDown"] = true;
 });
 
-document.querySelector('.down').addEventListener('mouseup', function() {
+addMultipleEventListener(document.querySelector('.down'), ['mouseup','touchend'], function() {
   document.querySelector('.down').style.transform = 'translate(0, 0)';
   delete KEYS_PRESSED["ArrowDown"];
 });
