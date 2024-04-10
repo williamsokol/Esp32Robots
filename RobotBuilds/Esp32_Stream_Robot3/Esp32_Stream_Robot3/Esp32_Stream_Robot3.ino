@@ -61,15 +61,17 @@ void setup() {
     return;
   }
 
-  // set up led DO NOT SET PIN TO OUT AFTER USING LEDC
-  ledcSetup(7, 5000, 8); // set channl 7 
-  ledcAttachPin(4, 7);  //pin4 is LED to channel 7
-
+  
   //set up motors
   initMotors();
 
   //set up camera
   initCamera();
+
+  // LEDC must be before init camera otherwise it messes with I2C
+  // set up led DO NOT SET PIN TO OUT AFTER USING LEDC
+  ledcSetup(7, 5000, 8); // set channl 7 
+  ledcAttachPin(4, 7);  //pin4 is LED to channel 7
 
   //set up wifi
   initWifi();
@@ -131,7 +133,6 @@ void loop() {
     Serial.println("entering APLoop");
     APLoop();
     delay(1000); // This is to make sure that Oninternet Updates before APLoop is ran again
-    dnsServer.processNextRequest();
   }
   else if(OnInternet == Connecting){
     Serial.println("connecting");

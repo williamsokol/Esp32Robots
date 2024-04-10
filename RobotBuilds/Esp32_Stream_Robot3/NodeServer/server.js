@@ -17,7 +17,7 @@ const HTTP_PORT = 80;
 const wsServer = new WebSocket.Server({port: WS_PORT}, ()=> console.log(`WS Server is listening at ${WS_PORT}`));
 
 let connectedClients = [];
-const robots = []
+var robots = []
 async function start() {
     let test = [1,2,3,4,5,6]
     test.splice(2,1)
@@ -112,6 +112,9 @@ async function handleRobotConnection(ws,req)
         console.log("robot websocket closed");
         if(req.headers['type'] == "robot")
             console.log("Removeing Robot #" + ws.id);
+            robots = robots.filter(function (robotws) {
+                return robotws.id !== ws.id;
+            });
             crud.deleteRow(ws.id);
     })
 

@@ -99,7 +99,7 @@ void WiFiStationSetup(String rec_ssid, String rec_password)
   while (WiFi.status() != WL_CONNECTED) {
     delay(2000);
     Serial.print(".");
-    if (millis() - t1 > 4000) //50 seconds elapsed connecting to WiFi
+    if (millis() - t1 > 10000) //50 seconds elapsed connecting to WiFi
     {
       Serial.println();
       Serial.println("Timeout connecting to WiFi. The SSID and Password seem incorrect.");
