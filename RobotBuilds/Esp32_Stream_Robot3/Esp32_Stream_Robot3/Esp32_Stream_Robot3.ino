@@ -106,11 +106,11 @@ void setup() {
 
   flashLED(1);
   
-  while( !client_connected ){
-    dnsServer.processNextRequest();
-    delay(1);   
-  }
-  flashLED(2);  
+//  while( !client_connected ){
+//    dnsServer.processNextRequest();
+//    delay(1);   
+//  }
+//  flashLED(2);  
 }   
 
 void loop() {
@@ -128,7 +128,13 @@ void loop() {
     oldMillis = time;
   }
  
-
+  if (OnInternet == SeekingClient){
+     while( OnInternet == SeekingClient ){
+      dnsServer.processNextRequest();
+      delay(1);   
+    }
+    flashLED(2); 
+  }else
   if(OnInternet == AP){
     Serial.println("entering APLoop");
     APLoop();
@@ -168,11 +174,17 @@ void APLoop(){
   while(xclient.available()) {
     frameCount++;
     if (frameCount%10 == 0){
-      dnsServer.processNextRequest();
+      dnsServer.processNextRequest(); 
       continue;
     }
+//    if (frameCount%10 == 5){
+//        char message[40];
+//        sprintf(message,"WiFi Is %lu", WiFi.RSSI());
+//        xclient.send(message);
+//    }
     xclient.poll();
     videoLoop();
+    
      
   }  
 }

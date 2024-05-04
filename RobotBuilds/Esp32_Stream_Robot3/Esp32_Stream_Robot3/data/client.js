@@ -34,6 +34,8 @@ ws.onclose = () => {
 
 ws.onmessage = message => {
     const arrayBuffer = message.data;
+    console.log(arrayBuffer)
+    // if (arrayBuffer == )
     if(urlObject){
         URL.revokeObjectURL(urlObject);
     }

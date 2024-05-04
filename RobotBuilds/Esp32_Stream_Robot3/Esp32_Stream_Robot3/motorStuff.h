@@ -5,3 +5,5 @@
 void initMotors();
 
 void controllMotors(float x, float y);
+
+void motorLoop();

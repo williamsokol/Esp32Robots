@@ -5,6 +5,11 @@ const int MotPin1 = 2;
 const int MotPin2 = 12;  
 //const int MotPin3 = 2;  
 
+static int oldl = 0, oldr = 0, oldm = 0;
+int l;
+int r;
+int m;
+
 void initMotors() 
 {
   pinMode(MotPin0, OUTPUT);
@@ -25,9 +30,8 @@ void controllMotors(float x, float y)
 {
   // y is power in the forward/backwards
   // x is how much of the power should go in each wheel
-  int l;
-  int r;
-  int m;
+  
+
   float normX;
   float normY;
   float adjustX;
@@ -43,7 +47,10 @@ void controllMotors(float x, float y)
 
   l = (adjustY + constrain(adjustX,-255,0 ));
   r = (adjustY - constrain(adjustX,0,255 ));
-  m = abs(adjustY);
+  m = abs(adjustY) ;
+
+
+
 // Serial.print("adjusted left and right Values: ");
 //  Serial.print(x);
 //  Serial.print(" ");
@@ -62,13 +69,38 @@ void controllMotors(float x, float y)
     ledcWrite(4,0);
     ledcWrite(6,m);
     ledcWrite(5,0 );
-    //ledcWrite(6,0);
+//    l = 0;
+//    r = 0;
+   
   }else{
+    
     ledcWrite(4,l);
     ledcWrite(6,0);
     ledcWrite(5,r);
+//    m = 0;
     
-    //ledcWrite(6,r);
+   
   }
 
+}
+
+int lowPassFilter(int current,int & old){
+  float rate = .9;
+  old = float(old)*rate + float(current)*(1-rate);
+  return old;
+}
+
+void motorLoop(){
+  static float oldTime = 0;
+  static bool oldMoveBackwards = false;
+  float DeltaTime = 0;
+  float rate = .5;
+  oldl = float(oldl)*rate + float(l)*(1-rate);
+  oldr = float(oldr)*rate + float(r)*(1-rate);
+  oldm = float(oldm)*rate + float(m)*(1-rate);
+
+  ledcWrite(4,oldl * (oldl>oldm));
+  ledcWrite(6,oldm * (oldm>oldl && oldm>oldr));
+  ledcWrite(5,oldr * (oldr>oldm));
+  
 }

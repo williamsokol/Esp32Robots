@@ -17,6 +17,7 @@ bool valid_password_received = false;
 bool wifi_timeout = false;
 char defaultAP [30] = "BallyBot";
 
+String processor(const String& var);
 
 void setupServer() {
   server.serveStatic("/", SPIFFS, "/").setDefaultFile("controls.html");
@@ -36,7 +37,7 @@ void setupServer() {
     Serial.print("OnInternet: ");
     Serial.println(OnInternet);
     
-    request->send_P(200, "text/html", index_html);
+    request->send_P(200, "text/html", index_html, processor);
   });
   
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest * request) {
@@ -61,6 +62,7 @@ void setupServer() {
     
     if (request->hasParam("confirmedclient")) {
       client_connected = true;
+      OnInternet = AP;
       Serial.println("Client confirmed");
       AsyncWebServerResponse *response = request->beginResponse(200);
       response->addHeader("robotName", defaultAP);
@@ -81,7 +83,7 @@ void WiFiSoftAPSetup()
   
   WiFi.softAP(defaultAP);
   Serial.print("AP IP address: "); Serial.println(WiFi.softAPIP());
-  OnInternet = AP;
+  OnInternet = SeekingClient;
 }
 
 void WiFiStationSetup(String rec_ssid, String rec_password)
@@ -198,4 +200,15 @@ void CheckForServer(){
   xclient = xclient2;
   OnInternet = InServer;
   
+}
+
+String processor(const String& var){
+  //Serial.println(var);
+  if(var == "SSID"){
+    return ssidString;
+  }
+  if(var == "PASS"){
+    return passwordString;
+  }
+  return String();
 }
