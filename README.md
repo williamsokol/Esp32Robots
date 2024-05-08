@@ -19,8 +19,8 @@ I have many plans to improve this in my free time and I plan on starting a store
 - [ ] NERF based Slam
 - [ ] Balancing code
 - [ ] Audio speaker / mic
-- [ ] Settings menu
-- [ ] Offline access point control
+- [x] Settings menu
+- [x] Offline access point control
 - [ ] Private connections
 
 ## Gameplay:
