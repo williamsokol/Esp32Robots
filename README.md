@@ -3,7 +3,7 @@
 ![IMAGE_DESCRIPTION](https://i.imgur.com/ZwCYrrB.jpeg)
 
 
-This is the development repo for the source code of BallyBots
+This is the development repo for the source code of BallyBots, Link to website: http://ballybots.com/
 
 You control a BallyBot from website and can move it from anywhere in the world. There are variations on the BallyBot but in essence they are to be interactive robots you can control for fun.
 
@@ -19,8 +19,8 @@ I have many plans to improve this in my free time and I plan on starting a store
 - [ ] NERF based Slam
 - [ ] Balancing code
 - [ ] Audio speaker / mic
-- [ ] Settings menu
-- [ ] Offline access point control
+- [x] Settings menu
+- [x] Offline access point control
 - [ ] Private connections
 
 ## Gameplay:
