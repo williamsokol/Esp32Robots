@@ -47,6 +47,10 @@ int frameCount = 0;
 WebsocketsServer xserver;
 WebsocketsClient xclient;
 
+// control input variables
+float inputX = 0;
+float inputY = 0;
+unsigned long lastInputTime = millis();
 
 
 
@@ -131,7 +135,7 @@ void loop() {
   if (OnInternet == SeekingClient){
      while( OnInternet == SeekingClient ){
       dnsServer.processNextRequest();
-      delay(1);   
+//      delay(1);   
     }
     flashLED(2); 
   }else
@@ -171,22 +175,43 @@ void APLoop(){
   xclient.onMessage(&callbackfunc);
   dnsServer.processNextRequest();
   int frameCount = 0;
+  float oldInputX = 0;
+  float oldInputY = 0;
+//  while(OnInternet != AP && xclient.available()){
+//      dnsServer.processNextRequest();
+//  } 
   while(xclient.available()) {
-    frameCount++;
-    if (frameCount%10 == 0){
-      dnsServer.processNextRequest(); 
-      continue;
-    }
-//    if (frameCount%10 == 5){
-//        char message[40];
-//        sprintf(message,"WiFi Is %lu", WiFi.RSSI());
-//        xclient.send(message);
+//    frameCount++;
+//    if (frameCount%10 == 0){
+//      dnsServer.processNextRequest(); 
+//      continue;
 //    }
+
+
+    // THIS IS TO STOP ROBOT FROM MOVING AFTER CONNECTION LOSS
+    if(oldInputX != inputX || oldInputY != inputY){ 
+      
+      oldInputX = inputX;
+      oldInputY = inputY;
+    
+      controllMotors(inputX,inputY);
+    }else if(millis() - lastInputTime > 300){
+      
+//      oldInputX = 0;
+//      oldInputY = 0;
+      controllMotors(0,0);
+    }
     xclient.poll();
     videoLoop();
     
      
   }  
+  delay(1000);
+  // If it is still in AP state then the connection was lost
+  if(OnInternet == AP){
+    OnInternet = SeekingClient; 
+  }
+  
 }
 
 void InServerLoop(){
@@ -200,19 +225,20 @@ void callbackfunc(WebsocketsClient& xclient, WebsocketsMessage msg)
 {
     char buff[20];
     msg.data().toCharArray(buff, 20);
-    Serial.print("callback ");
-    Serial.println(buff);
+//    Serial.print("callback ");
+//    Serial.println(buff);
 
     
     int x,y;
     if (sscanf(buff, "%d,%d", &x, &y) == 2) {
       //Serial.println(x);
 
-      float xf = (float)x/(float)100;
+      inputX = (float)x/(float)100;
       
-      float yf = (float)y/(float)100;
+      inputY = (float)y/(float)100;
       
-      controllMotors(xf,yf);
+      lastInputTime = millis();
+//      controllMotors(inputX,inputY);
     }
     else {
       Serial.println(buff);

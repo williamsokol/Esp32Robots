@@ -51,11 +51,11 @@ function sendInputData()
   
   inputs = raw.x+","+raw.y;
   
-  if(oldInputs == inputs){
-    return;
-  }
+  // if(oldInputs == inputs){
+  //   return;
+  // }
   oldInputs = inputs
-  console.log(inputs);
+  // console.log(inputs);
   ws.send(inputs);
 }
 
