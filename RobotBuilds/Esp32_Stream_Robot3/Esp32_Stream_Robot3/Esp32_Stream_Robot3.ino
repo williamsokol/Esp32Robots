@@ -177,15 +177,9 @@ void APLoop(){
   int frameCount = 0;
   float oldInputX = 0;
   float oldInputY = 0;
-//  while(OnInternet != AP && xclient.available()){
-//      dnsServer.processNextRequest();
-//  } 
+  
   while(xclient.available()) {
-//    frameCount++;
-//    if (frameCount%10 == 0){
-//      dnsServer.processNextRequest(); 
-//      continue;
-//    }
+
 
 
     // THIS IS TO STOP ROBOT FROM MOVING AFTER CONNECTION LOSS
@@ -215,9 +209,22 @@ void APLoop(){
 }
 
 void InServerLoop(){
+    float oldInputX = 0;
+    float oldInputY = 0;
     while (true){
       videoLoop();
       xclient.onMessage(&callbackfunc);
+      // THIS IS TO STOP ROBOT FROM MOVING AFTER CONNECTION LOSS
+      if(oldInputX != inputX || oldInputY != inputY){ 
+        
+        oldInputX = inputX;
+        oldInputY = inputY;
+      
+        controllMotors(inputX,inputY);
+      }else if(millis() - lastInputTime > 300){
+        
+        controllMotors(0,0);
+      }
       xclient.poll();  
     }    
 }
