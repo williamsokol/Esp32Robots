@@ -9,6 +9,7 @@ const IP = require('ip');
 const app = express();
 dotenv.config();
 
+app.use('/Images', express.static('Images'));
 app.use(express.static('Pages'));
 
 const WS_PORT  = 65080;
