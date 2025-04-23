@@ -41,6 +41,7 @@ void startCameraServer();
 void setupLedFlash(int pin);
 
 void setup() {
+  pinMode(14, OUTPUT); /* must set pin as it is on by default */
   WiFi.setSleep(false);
   Serial.begin(115200);
   Serial.setDebugOutput(true);
