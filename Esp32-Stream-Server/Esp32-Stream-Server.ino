@@ -9,12 +9,6 @@
         5. Sends an "echo" message to the client
         6. closes the connection and goes back to step 3
 
-  Hardware:
-        For this sketch you only need an ESP32 board.
-
-  Created 15/02/2019
-  By Gil Maimon
-  https://github.com/gilmaimon/ArduinoWebsockets
 */
 
 #include <ArduinoWebsockets.h>
