@@ -1,0 +1,65 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:300);
+
+/* html {
+  background: radial-gradient(#000, #111);
+  height: 100%;
+} */
+
+.keys {
+  font-family: 'Lato', sans-serif;
+  text-align: center;
+  width: 100%;
+  /* padding-top: ; */
+  /* height: 2%; */
+  margin: auto;
+  font-size: min(60px, 5vw);
+}
+
+.arr {
+  cursor: pointer;
+  width:  min(70px, 10vw);
+  /* height: 30%; */
+  /* padding-bottom: 2.5%; */
+  text-align: center;
+  line-height: 20%;
+  background: grey;
+  color: white;
+  /* font-size: 60px; */
+  border-right: 10px solid #6a6a6a;
+  border-bottom: 10px solid #5f5f5f;
+  border-left: 10px solid #6f6f6f;
+  border-top: 10px solid #747474;
+  display: inline-block;
+  margin: 5px;
+  transition: all .05s linear;
+
+
+  user-select: none;
+}
+
+.arr:active {
+  border-bottom: 8px solid darken(grey, 20);
+  text-shadow: 0 0 10px white, 0 0 10px white, 0 0 20px white;
+  transform: translate(0, 2px);
+}
+
+@media (orientation: portrait) {
+  .arr {
+    width: min(200px, 20vw);
+    height: 8vh;
+  }
+  .keys {
+    font-size: min(100px, 18vw);
+  }
+}
+
+.up {
+  position: relative;
+  top: -4px;
+}
+
+.pressed {
+  border-bottom: 8px solid darken(grey, 20);
+  text-shadow: 0 0 10px white;
+  transform: translate(0, 2px);
+}
