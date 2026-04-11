@@ -1,7 +1,9 @@
 const supa = require('@supabase/supabase-js');
+const dotenv = require('dotenv');
 
-const supabaseUrl = 'https://croqanlnwwpwfrajjgos.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyb3Fhbmxud3dwd2ZyYWpqZ29zIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU4MjQ1MjQsImV4cCI6MjAwMTQwMDUyNH0.yKni6eV7n4gKqjtC5uQgTLhCusLW3SymCWgub954upc';
+const result = dotenv.config();
+const supabaseUrl = process.env.supabaseUrl;
+const supabaseKey = process.env.supabaseKey;
 const supabase = supa.createClient(supabaseUrl, supabaseKey);
 
 async function AddRobot(name= 'a',password="b",id = null){

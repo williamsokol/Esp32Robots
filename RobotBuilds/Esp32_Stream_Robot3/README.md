@@ -9,4 +9,7 @@ and
 
 
 To run locally change both of those locations and call the command:
+
 `node server 0.0.0.0`
+
+change port in server.js to `const HTTP_PORT = 3000;` run locally also

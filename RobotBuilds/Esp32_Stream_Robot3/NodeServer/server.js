@@ -13,7 +13,7 @@ app.use('/Images', express.static('Images'));
 app.use(express.static('Pages'));
 
 const WS_PORT  = 65080;
-const HTTP_PORT = 80;
+const HTTP_PORT = 3000;
 
 const wsServer = new WebSocket.Server({port: WS_PORT}, ()=> console.log(`WS Server is listening at ${WS_PORT}`));
 

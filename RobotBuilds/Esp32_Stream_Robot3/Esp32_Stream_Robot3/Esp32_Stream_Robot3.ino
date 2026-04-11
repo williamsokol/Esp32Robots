@@ -2,24 +2,17 @@
 /*
   Esp32 Websockets Server
 
-  This sketch:
-        1. Connects to a WiFi network
-        2. Starts a websocket server on port 80
-        3. Waits for connections
-        4. Once a client connects, it wait for a message from the client
-        5. Sends an "echo" message to the client
-        6. closes the connection and goes back to step 3
-
-  Hardware:
-        For this sketch you only need an ESP32 board.
-
-  Created 15/02/2019
-  By Gil Maimon
+  
+  Created 15/02/2022
+  By William Sokol
+  
+  
+  Other:
   https://github.com/gilmaimon/ArduinoWebsockets
 */
 #include<vector>
 
-#include <ArduinoWebsockets.h>
+#include <ArduinoWebsockets.h> // by Gil Maimon
 #include <WiFi.h>
 
 //these 2 libs down are to stop brownout on esp32
@@ -39,7 +32,7 @@ const char* RobotName = "Ballyb";
 // String password = "Tablelamp!"; //Enter Password
 
 //server ip & port
-const char* websocket_server_host = "34.42.135.118";
+const char* websocket_server_host = "10.0.0.153";
 const uint16_t websocket_server_port = 65080;
 
 int frameCount = 0;
