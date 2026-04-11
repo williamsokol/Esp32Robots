@@ -32,7 +32,7 @@ const char* RobotName = "Ballyb";
 // String password = "Tablelamp!"; //Enter Password
 
 //server ip & port
-const char* websocket_server_host = "10.0.0.153";
+const char* websocket_server_host = "10.0.0.153"; // change this to server IP
 const uint16_t websocket_server_port = 65080;
 
 int frameCount = 0;

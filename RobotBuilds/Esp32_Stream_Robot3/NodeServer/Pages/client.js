@@ -1,6 +1,6 @@
 
-const WS_IP = '10.0.0.78' //'34.42.135.118'
-const WS_PORT = '65080'
+const WS_IP = process.env.IP;
+const WS_PORT = process.env.WS_PORT || '65080';
 
 
 fetch('/get?confirmedclient', {

@@ -3,17 +3,17 @@ const path = require('path');
 const express = require('express');
 const WebSocket = require('ws');
 const url = require('url');
-const dotenv = require('dotenv');
 const fs = require('fs');
 const IP = require('ip');
 const app = express();
+const dotenv = require('dotenv');
 dotenv.config();
 
 app.use('/Images', express.static('Images'));
 app.use(express.static('Pages'));
 
-const WS_PORT  = 65080;
-const HTTP_PORT = 3000;
+const WS_PORT  = process.env.WS_PORT;
+const HTTP_PORT = process.env.PORT;
 
 const wsServer = new WebSocket.Server({port: WS_PORT}, ()=> console.log(`WS Server is listening at ${WS_PORT}`));
 
@@ -54,22 +54,36 @@ wsServer.on('connection', async (ws, req)=>{
 });
 
 app.get('/',(req,res)=>res.sendFile(path.resolve(__dirname, './Pages/index.html')));
-app.get('/LobbyList',(req,res)=>res.sendFile(path.resolve(__dirname, './LobbyList.html')));
-app.get('/client',(req,res)=> {
-    const filePath = './Pages/client.js';
-    fs.readFile(filePath, 'utf8', (err, fileContent) => {
-        if (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-        } else {
-        // Set the appropriate content type
-        res.setHeader('Content-Type', 'application/javascript');
-        // Send the JavaScript file content as a response
-        console.log(fileContent);
-        res.send("fileContent");
-        }
-    });
-// res.sendFile(path.resolve(__dirname, './Pages/controls.html'))
+app.get('/LobbyList', (req, res) => {
+    const fs = require('fs');
+    let html = fs.readFileSync('./LobbyList.html', 'utf8');
+    
+    // Inject environment variables
+    html = html.replace(
+        `const supabaseUrl = 'https://croqanlnwwpwfrajjgos.supabase.co/rest/v1';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyb3Fhbmxud3dwd2ZyYWpqZ29zIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU4MjQ1MjQsImV4cCI6MjAwMTQwMDUyNH0.yKni6eV7n4gKqjtC5uQgTLhCusLW3SymCWgub954upc';`,
+        `const supabaseUrl = '${process.env.supabaseUrl}/rest/v1';
+            const supabaseKey = '${process.env.supabaseKey}';`
+    );
+    
+    res.send(html);
+});
+app.get('/client', (req, res) => {
+    const fs = require('fs');
+    let js = fs.readFileSync('./Pages/client.js', 'utf8');
+    
+    // Inject environment variables
+    js = js.replace(
+        `const WS_IP = process.env.IP;`,
+        `const WS_IP = '${process.env.IP}';`
+    );
+    js = js.replace(
+        `const WS_PORT = process.env.WS_PORT || '65080';`,
+        `const WS_PORT = '${process.env.WS_PORT}';`
+    );
+    
+    res.set('Content-Type', 'application/javascript');
+    res.send(js);
 });
 app.listen(HTTP_PORT, ()=> {
     
