@@ -13,6 +13,20 @@ Note: I am running the server with node in sudo because I am lazy to do nginx rn
 ```
 sudo /home/ubuntu/.nvm/versions/node/v24.14.1/bin/node server.js
 ```
+## pm2
+
+pm2 commnads (use sudo cause I run node in sudo):
+
+```
+sudo pm2 startup
+sudo pm2 status
+sudo pm2 list
+sudo pm2 start server.js --name "ballybot-server"
+sudo pm2 start heartbeat.js --name "supabase-heartbeat" --cron "0 0 * * *" --no-autorestart
+sudo pm2 startup
+sudo pm2 save
+sudo pm2 list
+```
 
 ## ip
 2 files that need to change ip address variables: <br>
